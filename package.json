@@ -1,4 +1,12 @@
 {
+  "name": "frc-israe-bot",
+  "version": "1.0.0",
+  "description": "A bot for the FRC Israel discord server",
+  "main": "src/index.js",
+  "repository": "https://github.com/Yarondr/FRC-Israel-Bot.git",
+  "author": "YaronD",
+  "license": "MIT",
+
   "dependencies": {
     "@types/node": "^17.0.34",
     "discord.js": "^13.7.0",
