@@ -2,7 +2,7 @@
   "name": "frc-israel-bot",
   "version": "1.0.0",
   "description": "A bot for the FRC Israel discord server",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "repository": "https://github.com/Yarondr/FRC-Israel-Bot.git",
   "author": "YaronD",
   "license": "MIT",
