@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "resolveJsonModule": true, 
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "watch": true,
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}
