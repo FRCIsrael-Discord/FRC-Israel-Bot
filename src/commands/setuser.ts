@@ -63,10 +63,5 @@ export default {
         } else {
             await interaction.reply({content: 'Team number is invalid!', ephemeral: true});
         }
-    },
-
-    error: ({info}) => {
-        console.log('error')
-        console.log(info)
     }
 } as ICommand
