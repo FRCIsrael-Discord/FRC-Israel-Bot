@@ -16,7 +16,6 @@ const client = new Client({
 });
 
 
-
 client.on('ready', () => {
     new WOKCommands(client, {
         commandDir: path.join(__dirname, 'commands'),
