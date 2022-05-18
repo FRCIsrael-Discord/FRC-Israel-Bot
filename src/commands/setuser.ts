@@ -30,35 +30,34 @@ export default {
         const nickname = args[0];
         const teamNumber = args[1];
         if (teamList.includes(teamNumber)) {
+            await interaction.deferReply({ephemeral: true});
             teamList.forEach(async team => {
                 const role = guild?.roles.cache.find(role => role.name.split(" | ")[1] == team);
                 if (role != undefined) await member.roles.remove(role);
             });
 
             const noTeamRole = guild?.roles.cache.find(role => role.name == "No Team");
+            if (noTeamRole != undefined) await member.roles.remove(noTeamRole);
 
             const newRole = guild?.roles.cache.find(role => role.name.split(" | ")[1] == teamNumber);
             if (newRole != undefined) {
                 await member.roles.add(newRole);
             } else {
-                await interaction.reply({content: "Team role not found!", ephemeral: true});
+                await interaction.editReply({content: "Team role not found!"});
                 return;
             }
 
             const newNick = `${nickname} | ${teamNumber}`;
             try {
                 await member.setNickname(newNick);
-                await interaction.reply({content: `Your group have been updated to ${teamNumber}`, ephemeral: true});
+                await interaction.editReply({content: `Your group have been updated to ${teamNumber}`});
             } catch (e) {
                 if (guild?.ownerId == member.id) {
-                    await interaction.reply({content: 'Can\'t change owner\'s nickname!', ephemeral: true});
+                    await interaction.editReply({content: 'Can\'t change owner\'s nickname!'});
                 } else {
-                    await interaction.reply({content: 'Can\'t set nickname', ephemeral: true});
+                    await interaction.editReply({content: 'Can\'t set nickname'});
                 }
             }
-            await new Promise(resolve => setTimeout(resolve, 3000));
-
-            if (noTeamRole != undefined) await member.roles.remove(noTeamRole);
 
         } else {
             await interaction.reply({content: 'Team number is invalid!', ephemeral: true});
