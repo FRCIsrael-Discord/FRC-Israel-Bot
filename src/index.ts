@@ -1,3 +1,4 @@
+console.log("Starting bot...")
 import { Client, Intents, Collection } from 'discord.js';
 import dotenv from 'dotenv';
 import { loadEvents } from './handlers/eventsHandler';
