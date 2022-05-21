@@ -1,11 +1,19 @@
-import { Client, Intents } from 'discord.js';
-import WOKCommands from 'wokcommands';
+import { Client, Intents, Collection } from 'discord.js';
 import dotenv from 'dotenv';
-import path from 'path';
+import { loadEvents } from './handlers/eventsHandler';
+import { loadCommands } from './handlers/commandsHandler';
+import { loadSlashCommands } from './handlers/slashCommandsHandler';
+import { IBot } from './utils/interfaces/IBot';
+import { ISlashCommand } from './utils/interfaces/ISlashCommand';
+import { IEvent } from './utils/interfaces/IEvent';
+import { ICommand } from './utils/interfaces/ICommand';
 dotenv.config();
 
 const myTestServerId = '851789251754328064';
 const FRCIsraelId = '959144521621458974'
+const testServers = [myTestServerId, FRCIsraelId];
+
+export const owners = ['306449257831989248']
 
 const client = new Client({
     intents: [
@@ -15,16 +23,22 @@ const client = new Client({
     ]
 });
 
+const commands = new Collection<string, ICommand>();
+const events = new Collection<string, IEvent>();
+const slashCommands = new Collection<string, ISlashCommand>();
 
-client.on('ready', () => {
-    new WOKCommands(client, {
-        commandDir: path.join(__dirname, 'commands'),
-        typeScript: true,
+const bot: IBot = {
+    client,
+    commands,
+    events,
+    slashCommands,
+    owners,
+    testServers,
+    prefix: '!'
+};
 
-        testServers: [myTestServerId, FRCIsraelId]
-    });
-
-    console.log("FRC Israel bot is now active!");
-});
+loadEvents(bot, false);
+loadCommands(bot, false);
+loadSlashCommands(bot, false);
 
 client.login(process.env.TOKEN);
