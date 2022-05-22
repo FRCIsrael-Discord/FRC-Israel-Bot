@@ -1,4 +1,4 @@
-import { ApplicationCommand, CommandInteraction, GuildMember } from "discord.js"
+import { CommandInteraction } from "discord.js"
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 
