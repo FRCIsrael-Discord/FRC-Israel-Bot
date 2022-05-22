@@ -5,7 +5,7 @@ import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 module.exports = {
     name: "kickdana",
     category: "Other",
-    devOnly: true,
+    devOnly: false,
     description: "Kick dana from voice channel",
     permissions: ["SEND_MESSAGES"],
     botPermissions: ['SEND_MESSAGES'],
