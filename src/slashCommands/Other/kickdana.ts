@@ -14,9 +14,9 @@ module.exports = {
         
         if (member.voice.channel) {
             await member.voice.disconnect();
-            await interaction.reply("Dana has been kicked from voice channel!");
+            await interaction.reply({content: "Dana has been kicked from voice channel!", ephemeral: true});
         } else {
-            await interaction.reply("Dana is not in voice channel!");
+            await interaction.reply({content: "Dana is not in voice channel!", ephemeral: true});
         }
     }
 } as ISlashCommand;
