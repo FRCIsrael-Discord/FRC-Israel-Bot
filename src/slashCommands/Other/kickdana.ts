@@ -10,7 +10,13 @@ module.exports = {
     permissions: ["SEND_MESSAGES"],
     botPermissions: ['SEND_MESSAGES'],
     execute: async (bot: IBot, interaction: CommandInteraction) => {
-        const member = interaction.member as GuildMember;
+        const { guild } = interaction;
+        const member = (await (guild?.members.fetch())!).find(m => m.id === "913803110466588744");
+
+        if (!member) {
+            await interaction.reply("Could not find dana!");
+            return
+        }
         
         if (member.voice.channel) {
             await member.voice.disconnect();
