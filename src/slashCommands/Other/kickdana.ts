@@ -2,6 +2,12 @@ import { CommandInteraction } from "discord.js"
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 
+/**
+*
+* A command request by ACK and Dana
+*
+*/
+
 module.exports = {
     name: "kickdana",
     category: "Other",
