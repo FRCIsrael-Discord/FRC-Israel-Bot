@@ -1,5 +1,5 @@
 console.log("Starting bot...")
-import { Client, Intents, Collection } from 'discord.js';
+import { Client, Intents, Collection, GuildChannel } from 'discord.js';
 import dotenv from 'dotenv';
 import { loadEvents } from './handlers/eventsHandler';
 import { loadCommands } from './handlers/commandsHandler';
@@ -8,6 +8,7 @@ import { IBot } from './utils/interfaces/IBot';
 import { ISlashCommand } from './utils/interfaces/ISlashCommand';
 import { IEvent } from './utils/interfaces/IEvent';
 import { ICommand } from './utils/interfaces/ICommand';
+import { scheduleChannelLock } from './utils/timeSchedulers';
 dotenv.config();
 
 const myTestServerId = '851789251754328064';
@@ -41,5 +42,7 @@ const bot: IBot = {
 loadEvents(bot, false);
 loadCommands(bot, false);
 loadSlashCommands(bot, false);
+
+scheduleChannelLock(bot.client, myTestServerId);
 
 client.login(process.env.TOKEN);
