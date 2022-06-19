@@ -43,6 +43,6 @@ loadEvents(bot, false);
 loadCommands(bot, false);
 loadSlashCommands(bot, false);
 
-scheduleChannelLock(bot.client, myTestServerId);
+scheduleChannelLock(bot.client, FRCIsraelId);
 
 client.login(process.env.TOKEN);
