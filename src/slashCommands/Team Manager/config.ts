@@ -71,16 +71,16 @@ module.exports = {
                 return;
             }
             const role = options.getRole('role')!;
-            setFTCTeamRoleId(role.id);
-            await interaction.reply({content: `FTC Team role id has been set to ${role.id}`, ephemeral: true});
+            setNoTeamRoleId(role.id);
+            await interaction.reply({content: `No Team role id has been set to ${role.id}`, ephemeral: true});
         } else if (subCommand == 'ftc') {
             if (!(member?.permissions.has('ADMINISTRATOR') || guild?.ownerId == member.id)) {
                 await interaction.reply({content: 'You must be an administrator to use this command!', ephemeral: true});
                 return;
             }
             const role = options.getRole('role')!;
-            setNoTeamRoleId(role.id);
-            await interaction.reply({content: `No Team role id has been set to ${role.id}`, ephemeral: true});
+            setFTCTeamRoleId(role.id);
+            await interaction.reply({content: `FTC role id has been set to ${role.id}`, ephemeral: true});
         } else if (subCommand == 'teams') {
             if (!(member.permissions.has('ADMINISTRATOR') || guild?.ownerId == member.id)) {
                 await interaction.reply({content: 'You must be an administrator to use this command!', ephemeral: true});
