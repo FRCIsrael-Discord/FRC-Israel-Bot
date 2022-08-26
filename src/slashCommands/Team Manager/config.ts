@@ -44,6 +44,19 @@ module.exports = {
             name: 'teams',
             type: 'SUB_COMMAND',
             description: 'Update the group teams role ids',
+        },
+        {
+            name: 'ftc',
+            type: 'SUB_COMMAND',
+            description: 'Update the group ftc role id',
+            options: [
+                {
+                    name: 'role',
+                    type: 'ROLE',
+                    required: true,
+                    description: "The role to set as ftc team role"
+                }
+            ],
         }
 
     ],
