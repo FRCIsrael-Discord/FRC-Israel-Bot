@@ -34,6 +34,6 @@ export function setNoTeamRoleId(roleId: string) {
 
 export function setFTCTeamRoleId(roleId: string) {
     const roles = getRolesJson();
-    roles['ftc'] = roleId;
+    roles['ftc role'] = roleId;
     fs.writeFileSync('./roles.json', JSON.stringify(roles, null, 2));
 }
