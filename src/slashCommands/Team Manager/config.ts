@@ -1,7 +1,7 @@
 import { CommandInteraction, GuildMember } from 'discord.js';
 import { IBot } from '../../utils/interfaces/IBot';
 import { ISlashCommand } from '../../utils/interfaces/ISlashCommand';
-import { addTeamRole, getNoTeamRoleId, getTeamRoles, isTeamRoleExists, setNoTeamRoleId } from '../../utils/rolesJsonHandler';
+import { addTeamRole, getNoTeamRoleId, getTeamRoles, isTeamRoleExists, setFTCTeamRoleId, setNoTeamRoleId } from '../../utils/rolesJsonHandler';
 
 export const teamList: string[] = [
     '1574', '1576', '1577', '1580', '1657',
@@ -23,7 +23,7 @@ module.exports = {
     category: 'Team Manager',
     description: 'Config teams info and data',
     devOnly: false,
-    permissions: ['SEND_MESSAGES'],
+    permissions: ['SEND_MESSAGES', 'ADMINISTRATOR'],
     botPermissions: ['MANAGE_ROLES', 'SEND_MESSAGES'],
 
     options: [
@@ -66,6 +66,14 @@ module.exports = {
         const member: GuildMember = interaction.member as GuildMember
         const subCommand = options.getSubcommand();
         if (subCommand == 'noteam') {
+            if (!(member?.permissions.has('ADMINISTRATOR') || guild?.ownerId == member.id)) {
+                await interaction.reply({content: 'You must be an administrator to use this command!', ephemeral: true});
+                return;
+            }
+            const role = options.getRole('role')!;
+            setFTCTeamRoleId(role.id);
+            await interaction.reply({content: `FTC Team role id has been set to ${role.id}`, ephemeral: true});
+        } else if (subCommand == 'ftc') {
             if (!(member?.permissions.has('ADMINISTRATOR') || guild?.ownerId == member.id)) {
                 await interaction.reply({content: 'You must be an administrator to use this command!', ephemeral: true});
                 return;
