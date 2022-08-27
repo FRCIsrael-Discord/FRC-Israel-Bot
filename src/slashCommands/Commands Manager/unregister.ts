@@ -1,4 +1,4 @@
-import { ApplicationCommand, CommandInteraction } from "discord.js"
+import { ApplicationCommand, ApplicationCommandOptionType, CommandInteraction } from "discord.js"
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 
@@ -7,17 +7,18 @@ module.exports = {
     category: "Commands Manager",
     devOnly: true,
     description: "Unregister a command",
-    permissions: ["ADMINISTRATOR"],
-    botPermissions: ['SEND_MESSAGES'],
+    permissions: ["Administrator"],
+    botPermissions: ['SendMessages'],
     options: [
         {
             name: 'command',
             description: "The command name to unregister",
-            type: "STRING",
+            type: ApplicationCommandOptionType.String,
             required: true,
         }
     ],
     execute: async (bot: IBot, interaction: CommandInteraction) => {
+        if (!interaction.isChatInputCommand()) return;
         const { options } = interaction;
         const { slashCommands } = bot;
         const command = options.getString('command')!;

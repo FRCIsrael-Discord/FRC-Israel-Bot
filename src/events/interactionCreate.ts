@@ -13,6 +13,7 @@ module.exports = {
         if (!interaction.isCommand()) return;
         const member = interaction.member as GuildMember;
         if (!interaction.inGuild()) return interaction.reply("This command can only be used in a server!");
+
     
         const slashCommand: ISlashCommand | undefined = slashCommands.get(interaction.commandName);
         if (!slashCommand) return interaction.reply("This command does not exist!");

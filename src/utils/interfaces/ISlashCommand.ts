@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, CommandInteraction, PermissionString } from "discord.js";
+import { ApplicationCommandOptionData, CommandInteraction, PermissionResolvable } from "discord.js";
 import { IBot } from "./IBot";
 
 export interface ISlashCommand {
@@ -6,8 +6,8 @@ export interface ISlashCommand {
     category: string,
     description: string,
     devOnly?: boolean,
-    permissions?: PermissionString[],
-    botPermissions?: PermissionString[],
+    permissions?: PermissionResolvable[],
+    botPermissions?: PermissionResolvable[],
     options: ApplicationCommandOptionData[],
     execute: (bot: IBot, interaction: CommandInteraction, ...args: any) => Promise<any>;
 }
