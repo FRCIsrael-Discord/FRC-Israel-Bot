@@ -43,6 +43,7 @@ module.exports = {
     
     execute: async (bot: IBot, interaction: CommandInteraction) => { 
         if (!interaction.isChatInputCommand()) return;
+        await interaction.deferReply({ephemeral: true});
         const { options, guild } = interaction;
         const member: GuildMember = interaction.member as GuildMember
         const subCommand = options.getSubcommand();
@@ -52,8 +53,6 @@ module.exports = {
             const teamNumber = options.getString('team_number')!;
             if (frcTeamList.includes(teamNumber) || ftcTeamList.includes(teamNumber)) {
                 if (isFTC == null || isFTC == false) {
-                    await interaction.deferReply({ephemeral: true});
-
                     const teamRoles = getTeamRoles();
                     const memberRoles = member.roles.cache;
                     const guildRoles = await guild!.roles.fetch();
@@ -68,12 +67,11 @@ module.exports = {
                     await setFRCRole(guildRoles, member, teamNumber, interaction);
                     await renameMember(member, guild!, nickname, teamNumber, interaction);
                 } else if (isFTC) {
-                    await interaction.deferReply({ephemeral: true});
                     await setFTCRole(member, interaction);
                     await renameMember(member, guild!, nickname, teamNumber, interaction);
                 }
             } else {
-                await interaction.reply({content: 'Team number is invalid!', ephemeral: true});
+                await interaction.editReply({content: 'Team number is invalid!'});
             }
         }
     }
