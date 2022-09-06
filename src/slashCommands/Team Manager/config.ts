@@ -52,7 +52,7 @@ module.exports = {
             options: [
                 {
                     name: 'role',
-                    type: 'ROLE',
+                    type: ApplicationCommandOptionType.Role,
                     required: true,
                     description: "The role to set as ftc team role"
                 }
