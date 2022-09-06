@@ -1,5 +1,5 @@
 console.log("Starting bot...")
-import { Client, Intents, Collection, GuildChannel } from 'discord.js';
+import { Client, Collection, IntentsBitField } from 'discord.js';
 import dotenv from 'dotenv';
 import { loadEvents } from './handlers/eventsHandler';
 import { loadCommands } from './handlers/commandsHandler';
@@ -19,9 +19,9 @@ export const owners = ['306449257831989248']
 
 const client = new Client({
     intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MEMBERS
+        IntentsBitField.Flags.Guilds,
+        IntentsBitField.Flags.GuildMessages,
+        IntentsBitField.Flags.GuildMembers
     ]
 });
 
