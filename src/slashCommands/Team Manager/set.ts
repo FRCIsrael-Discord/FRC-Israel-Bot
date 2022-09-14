@@ -50,7 +50,7 @@ module.exports = {
         if (subCommand == 'user') {
             const isFTC = options.getBoolean('ftc');
             const nickname = options.getString('nickname')!;
-            const teamNumber = options.getString('team_number')!;
+            const teamNumber = options.getNumber('team_number')!;
             if (frcTeamList.includes(teamNumber) || ftcTeamList.includes(teamNumber)) {
                 if (isFTC == null || isFTC == false) {
                     const teamRoles = getTeamRoles();
