@@ -6,6 +6,7 @@ export interface ISlashCommand {
     category: string,
     description: string,
     devOnly?: boolean,
+    ephemeral?: boolean,
     permissions?: PermissionResolvable[],
     botPermissions?: PermissionResolvable[],
     options: ApplicationCommandOptionData[],
