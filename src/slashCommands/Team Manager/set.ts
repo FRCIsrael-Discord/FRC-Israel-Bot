@@ -1,4 +1,4 @@
-import { Collection, CommandInteraction, Guild, GuildMember, Role } from 'discord.js';
+import { ApplicationCommandOptionType, Collection, CommandInteraction, Guild, GuildMember, Role } from 'discord.js';
 import { IBot } from '../../utils/interfaces/IBot';
 import { ISlashCommand } from '../../utils/interfaces/ISlashCommand';
 import { getNoTeamRoleId, getTeamRoles } from '../../utils/rolesJsonHandler';
@@ -10,30 +10,30 @@ module.exports = {
     description: 'Set info about a user',
     devOnly: false,
     ephemeral: true,
-    permissions: ['SEND_MESSAGES'],
-    botPermissions: ['MANAGE_ROLES', 'SEND_MESSAGES', 'CHANGE_NICKNAME', 'MANAGE_NICKNAMES'],
+    permissions: ['SendMessages'],
+    botPermissions: ['ManageRoles', 'SendMessages', 'ChangeNickname', 'ManageNicknames'],
 
     options: [
         {
             name: 'user',
-            type: 'SUB_COMMAND',
+            type: ApplicationCommandOptionType.Subcommand,
             description: 'Update the member nickname and group role',
             options: [
                 {
                     name: 'nickname',
-                    type: 'STRING',
+                    type: ApplicationCommandOptionType.String,
                     required: true,
                     description: "The nickname",
                 },
                 {
                     name: 'team_number',
-                    type : 'NUMBER',
+                    type: ApplicationCommandOptionType.Number,
                     required: true,
                     description: "Your team number"
                 },
                 {
                     name: 'ftc',
-                    type: 'BOOLEAN',
+                    type: ApplicationCommandOptionType.Boolean,
                     required: false,
                     description: "Is this a FTC team?"
                 }
@@ -43,16 +43,17 @@ module.exports = {
     ],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => { 
+        if (!interaction.isChatInputCommand()) return;
+        await interaction.deferReply({ephemeral: true});
         const { options, guild } = interaction;
         const member: GuildMember = interaction.member as GuildMember
         const subCommand = options.getSubcommand();
         if (subCommand == 'user') {
-            const isFTC: boolean | null = options.getBoolean('ftc');
+            const isFTC = options.getBoolean('ftc');
             const nickname = options.getString('nickname')!;
             const teamNumber = options.getNumber('team_number')!.toString();
             if (frcTeamList.includes(teamNumber) || ftcTeamList.includes(teamNumber)) {
                 if (isFTC == null || isFTC == false) {
-
                     const teamRoles = getTeamRoles();
                     const memberRoles = member.roles.cache;
                     const guildRoles = await guild!.roles.fetch();

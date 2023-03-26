@@ -7,7 +7,7 @@ export function scheduleChannelLock(client: Client, guildId: string) {
         const channel = guild.channels.cache.get('963533940159840297') as GuildChannel;
         const roles = await guild.roles.fetch();
         await channel.permissionOverwrites.edit(roles.get('959144521621458974')!, {
-            SEND_MESSAGES: false
+            SendMessages: false
         });
     });
     
@@ -16,7 +16,7 @@ export function scheduleChannelLock(client: Client, guildId: string) {
         const channel = guild.channels.cache.get('963533940159840297') as GuildChannel;
         const roles = await guild.roles.fetch();
         await channel.permissionOverwrites.edit(roles.get('959144521621458974')!, {
-            SEND_MESSAGES: true
+            SendMessages: true
         });
     });
 }
