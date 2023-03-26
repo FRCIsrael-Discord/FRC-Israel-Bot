@@ -76,7 +76,6 @@ module.exports = {
             setFTCTeamRoleId(role.id);
             await interaction.editReply({content: `FTC role id has been set to ${role.id}`});
         } else if (subCommand == 'teams') {
-            await interaction.deferReply({ephemeral: true});
             const guildRoles = await guild!.roles.fetch();
             let amount = 0;
             guildRoles.forEach(role => {

@@ -44,7 +44,6 @@ module.exports = {
     
     execute: async (bot: IBot, interaction: CommandInteraction) => { 
         if (!interaction.isChatInputCommand()) return;
-        await interaction.deferReply({ephemeral: true});
         const { options, guild } = interaction;
         const member: GuildMember = interaction.member as GuildMember
         const subCommand = options.getSubcommand();
