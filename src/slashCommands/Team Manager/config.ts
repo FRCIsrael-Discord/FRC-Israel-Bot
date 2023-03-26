@@ -23,6 +23,7 @@ module.exports = {
     category: 'Team Manager',
     description: 'Config teams info and data',
     devOnly: false,
+    ephemeral: true,
     permissions: ['SEND_MESSAGES', 'ADMINISTRATOR'],
     botPermissions: ['MANAGE_ROLES', 'SEND_MESSAGES'],
 
@@ -67,26 +68,25 @@ module.exports = {
         const subCommand = options.getSubcommand();
         if (subCommand == 'noteam') {
             if (!(member?.permissions.has('ADMINISTRATOR') || guild?.ownerId == member.id)) {
-                await interaction.reply({content: 'You must be an administrator to use this command!', ephemeral: true});
+                await interaction.editReply({content: 'You must be an administrator to use this command!'});
                 return;
             }
             const role = options.getRole('role')!;
             setNoTeamRoleId(role.id);
-            await interaction.reply({content: `No Team role id has been set to ${role.id}`, ephemeral: true});
+            await interaction.editReply({content: `No Team role id has been set to ${role.id}`});
         } else if (subCommand == 'ftc') {
             if (!(member?.permissions.has('ADMINISTRATOR') || guild?.ownerId == member.id)) {
-                await interaction.reply({content: 'You must be an administrator to use this command!', ephemeral: true});
+                await interaction.editReply({content: 'You must be an administrator to use this command!'});
                 return;
             }
             const role = options.getRole('role')!;
             setFTCTeamRoleId(role.id);
-            await interaction.reply({content: `FTC role id has been set to ${role.id}`, ephemeral: true});
+            await interaction.editReply({content: `FTC role id has been set to ${role.id}`});
         } else if (subCommand == 'teams') {
             if (!(member.permissions.has('ADMINISTRATOR') || guild?.ownerId == member.id)) {
-                await interaction.reply({content: 'You must be an administrator to use this command!', ephemeral: true});
+                await interaction.editReply({content: 'You must be an administrator to use this command!'});
                 return;
             }
-            await interaction.deferReply({ephemeral: true});
             const guildRoles = await guild!.roles.fetch();
             let amount = 0;
             guildRoles.forEach(role => {

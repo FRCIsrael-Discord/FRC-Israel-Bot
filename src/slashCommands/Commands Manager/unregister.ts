@@ -6,6 +6,7 @@ module.exports = {
     name: "unregister",
     category: "Commands Manager",
     devOnly: true,
+    ephemeral: true,
     description: "Unregister a command",
     permissions: ["ADMINISTRATOR"],
     botPermissions: ['SEND_MESSAGES'],
@@ -23,7 +24,6 @@ module.exports = {
         const command = options.getString('command')!;
 
         try {
-            await interaction.deferReply({ephemeral: true});
             if (!slashCommands.has(command)) {
                 return interaction.editReply({content: "This command does not exist!"});
             } else {
@@ -38,7 +38,7 @@ module.exports = {
         } catch (e) {
             console.error(e);
             try {
-                return interaction.reply({content:"An error occurred while trying to unregister the command.", ephemeral: true});
+                return interaction.editReply({content:"An error occurred while trying to unregister the command."});
             } catch (e) {
                 return interaction.editReply("An error occurred while trying to unregister the command.");
             }

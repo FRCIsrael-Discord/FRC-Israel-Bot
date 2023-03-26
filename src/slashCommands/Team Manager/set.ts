@@ -9,6 +9,7 @@ module.exports = {
     category: 'Team Manager',
     description: 'Set info about a user',
     devOnly: false,
+    ephemeral: true,
     permissions: ['SEND_MESSAGES'],
     botPermissions: ['MANAGE_ROLES', 'SEND_MESSAGES', 'CHANGE_NICKNAME', 'MANAGE_NICKNAMES'],
 
@@ -51,7 +52,6 @@ module.exports = {
             const teamNumber = options.getNumber('team_number')!.toString();
             if (frcTeamList.includes(teamNumber) || ftcTeamList.includes(teamNumber)) {
                 if (isFTC == null || isFTC == false) {
-                    await interaction.deferReply({ephemeral: true});
 
                     const teamRoles = getTeamRoles();
                     const memberRoles = member.roles.cache;
@@ -67,12 +67,11 @@ module.exports = {
                     await setFRCRole(guildRoles, member, teamNumber, interaction);
                     await renameMember(member, guild!, nickname, teamNumber, interaction);
                 } else if (isFTC) {
-                    await interaction.deferReply({ephemeral: true});
                     await setFTCRole(member, interaction);
                     await renameMember(member, guild!, nickname, teamNumber, interaction);
                 }
             } else {
-                await interaction.reply({content: 'Team number is invalid!', ephemeral: true});
+                await interaction.editReply({content: 'Team number is invalid!'});
             }
         }
     }
