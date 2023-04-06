@@ -15,6 +15,11 @@ export function getNoTeamRoleId(): string {
     return roles['no team'];
 }
 
+export function getFTCTeamRoleId(): string {
+    const roles = getRolesJson();
+    return roles['ftc role'];
+}
+
 export function addTeamRole(roleId: string) {
     const roles = getRolesJson();
     roles['team roles'].push(roleId);
