@@ -15,22 +15,24 @@ module.exports = {
         if (!interaction.inGuild()) return interaction.reply("This command can only be used in a server!");
 
         const slashCommand: ISlashCommand | undefined = slashCommands.get(interaction.commandName);
-        if (!slashCommand) return interaction.editReply("This command does not exist!");
+        if (!slashCommand) return await interaction.editReply("This command does not exist!");
 
-        await interaction.deferReply({ ephemeral: slashCommand.ephemeral || false }).catch(() => { });
+        await interaction.deferReply({ ephemeral: slashCommand.ephemeral || false }).catch((err: Error) => {
+            console.error(err);
+        });
 
         if (slashCommand.devOnly && !owners.includes(member.id)) {
-            return interaction.editReply("This command is only for developers!");
+            return await interaction.editReply("This command is only for developers!");
         }
 
         if (slashCommand.permissions && !channel.permissionsFor(member).has(slashCommand.permissions)) {
             const missingPerms = channel.permissionsFor(member).missing(slashCommand.permissions!)
-            return interaction.editReply(`You don't have permission to use this command!\nMissing permissions: ${missingPerms?.join(', ')}`);
+            return await interaction.editReply(`You don't have permission to use this command!\nMissing permissions: ${missingPerms?.join(', ')}`);
         }
 
         if (slashCommand.botPermissions && !channel?.permissionsFor(client.user!)?.has(slashCommand.botPermissions)) {
             const missingPerms = channel?.permissionsFor(client.user!)?.missing(slashCommand.botPermissions)
-            return interaction.editReply(`I don't have the required permissions to use this command!\nMissing permissions: ${missingPerms?.join(', ')}`);
+            return await interaction.editReply(`I don't have the required permissions to use this command!\nMissing permissions: ${missingPerms?.join(', ')}`);
         }
 
         await slashCommand.execute(bot, interaction).catch((err: Error) => {

@@ -2,21 +2,7 @@ import { ApplicationCommandOptionType, CommandInteraction, GuildMember } from 'd
 import { IBot } from '../../utils/interfaces/IBot';
 import { ISlashCommand } from '../../utils/interfaces/ISlashCommand';
 import { addTeamRole, getNoTeamRoleId, getTeamRoles, isTeamRoleExists, setFTCTeamRoleId, setNoTeamRoleId } from '../../utils/rolesJsonHandler';
-
-export const teamList: string[] = [
-    '1574', '1576', '1577', '1580', '1657',
-    '1690', '1937', '1942', '1943', '1954',
-    '2096', '2212', '2230', '2231', '2630',
-    '2679', '3065', '3075', '3083', '3211',
-    '3316', '3339', '3388', '3835', '4319',
-    '4320', '4338', '4416', '4586', '4590',
-    '4661', '4744', '5135', '5291', '5554',
-    '5614', '5635', '5654', '5715', '5928',
-    '5951', '5987', '5990', '6104', '6168',
-    '6230', '6738', '6740', '6741', '7039',
-    '7067', '7112', '7177', '7845', '8175',
-    '8223', '8843'
-]
+import { frcTeamList } from '../../utils/teamLists';
 
 module.exports = {
     name: 'teamconfig',
@@ -79,7 +65,7 @@ module.exports = {
             const guildRoles = await guild!.roles.fetch();
             let amount = 0;
             guildRoles.forEach(role => {
-                if (teamList.includes(role.name.split(" | ")[1]) && !isTeamRoleExists(role.id)) {
+                if (frcTeamList.includes(role.name.split(" | ")[1]) && !isTeamRoleExists(role.id)) {
                     amount++;
                     addTeamRole(role.id);
                 }
