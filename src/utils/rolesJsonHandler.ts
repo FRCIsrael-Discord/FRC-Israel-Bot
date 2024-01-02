@@ -1,8 +1,39 @@
 import * as fs from 'fs';
+import { RequireAtLeastOne } from './types/RequireAtLeastOne';
+
+const filePath = './roles.json';
+
+interface RolesJson {
+    'team roles': string[];
+    'no team': string;
+    'ftc role': string;
+}
+
+function createRolesJson() {
+    const rolesJson = {
+        'team roles': [],
+        'no team': '',
+        'ftc role': ''
+    } as RolesJson;
+    fs.writeFileSync(filePath, JSON.stringify(rolesJson, null, 2));
+}
+
+function isRolesJsonExists(): boolean {
+    return fs.existsSync(filePath);
+}
 
 function getRolesJson() {
-    const rolesJson = fs.readFileSync('./roles.json', 'utf8');
-    return JSON.parse(rolesJson);
+    if (!isRolesJsonExists()) createRolesJson();
+
+    const rolesJson = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(rolesJson) as RolesJson;
+}
+
+function updateRolesJson(update: RequireAtLeastOne<RolesJson>) {
+    const roles = getRolesJson();
+    const newObject = Object.assign(roles, update);
+
+    fs.writeFileSync(filePath, JSON.stringify(newObject, null, 2));
 }
 
 export function getTeamRoles(): string[] {
@@ -20,10 +51,10 @@ export function getFTCTeamRoleId(): string {
     return roles['ftc role'];
 }
 
-export function addTeamRole(roleId: string) {
-    const roles = getRolesJson();
-    roles['team roles'].push(roleId);
-    fs.writeFileSync('./roles.json', JSON.stringify(roles, null, 2));
+export function setTeamRoles(roleIds: string[]) {
+    updateRolesJson({
+        'team roles': roleIds
+    });
 }
 
 export function isTeamRoleExists(roleId: string): boolean {
@@ -32,13 +63,13 @@ export function isTeamRoleExists(roleId: string): boolean {
 }
 
 export function setNoTeamRoleId(roleId: string) {
-    const roles = getRolesJson();
-    roles['no team'] = roleId;
-    fs.writeFileSync('./roles.json', JSON.stringify(roles, null, 2));
+    updateRolesJson({
+        'no team': roleId
+    });
 }
 
 export function setFTCTeamRoleId(roleId: string) {
-    const roles = getRolesJson();
-    roles['ftc role'] = roleId;
-    fs.writeFileSync('./roles.json', JSON.stringify(roles, null, 2));
+    updateRolesJson({
+        'ftc role': roleId
+    });
 }
