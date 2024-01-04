@@ -17,7 +17,7 @@ interface RolesObject {
 };
 
 
-const filePath = './config.json';
+const filePath = 'config.json';
 
 if (!fs.existsSync(filePath)) {
     logWarn('config.json does not exist!');
@@ -25,10 +25,15 @@ if (!fs.existsSync(filePath)) {
     logWarn('Exiting...');
     process.exit(1);
 }
-const config: ConfigObject = require(filePath);
+
+const config = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
 function updateConfigFile() {
     fs.writeFileSync(filePath, JSON.stringify(config, null, 2));
+}
+
+export function getBotToken(): string {
+    return config.token;
 }
 
 export function getTeamRoles(): string[] {
@@ -67,6 +72,10 @@ export function setSupportSetting(supportType: SupportType, supportSetting: Supp
     updateConfigFile();
 }
 
-export function getSupportSetting(supportType: SupportType): SupportSetting {
+export function getSupportSetting(supportType: SupportType): SupportSetting | undefined {
     return config.supportSettings[supportType];
+}
+
+export function getSupportRoleByChannelId(channelId: string): SupportType | undefined {
+    return Object.keys(config.supportSettings).find(supportType => config.supportSettings[supportType as SupportType].channelId === channelId) as SupportType | undefined;
 }

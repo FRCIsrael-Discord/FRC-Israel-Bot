@@ -1,11 +1,11 @@
-import { CacheType, Client, Guild, GuildMember, Interaction, TextChannel } from "discord.js"
+import { CacheType, Client, Events, Guild, GuildMember, Interaction, TextChannel } from "discord.js"
 import { IBot } from "../utils/interfaces/IBot"
 import { IEvent } from "../utils/interfaces/IEvent"
 import { ISlashCommand } from "../utils/interfaces/ISlashCommand";
 import { logError } from "../utils/logger";
 
 module.exports = {
-    name: "interactionCreate",
+    name: Events.InteractionCreate,
     once: false,
     execute: async (bot: IBot, interaction: Interaction<CacheType>, ...args: any) => {
         const { slashCommands, buttons, modals, owners, client } = bot;

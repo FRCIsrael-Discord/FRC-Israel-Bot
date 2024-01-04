@@ -69,11 +69,6 @@ module.exports = {
         const type = options.getString('type', true) as SupportType;
         const role = options.getRole('role', true);
 
-        if (!role.mentionable) {
-            return await interaction.editReply({ content: "The role you provided is not mentionable!" });
-        }
-
-
         try {
             setSupportSetting(type, {
                 channelId: channel.id,

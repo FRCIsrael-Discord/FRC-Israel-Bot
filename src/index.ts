@@ -1,4 +1,6 @@
+import { logInfo } from './utils/logger';
 logInfo("Starting bot...")
+
 import { Client, Collection, IntentsBitField } from 'discord.js';
 import { loadEvents } from './handlers/eventsHandler';
 import { loadCommands } from './handlers/commandsHandler';
@@ -12,7 +14,7 @@ import { loadButtons } from './handlers/buttonsHandler';
 import { IButton } from './utils/interfaces/IButton';
 import { IModal } from './utils/interfaces/IModal';
 import { loadModals } from './handlers/modalsHandler';
-import { logInfo } from './utils/logger';
+import { getBotToken } from './utils/config';
 
 const myTestServerId = '851789251754328064';
 const FRCIsraelId = '959144521621458974'
@@ -24,7 +26,8 @@ const client = new Client({
     intents: [
         IntentsBitField.Flags.Guilds,
         IntentsBitField.Flags.GuildMessages,
-        IntentsBitField.Flags.GuildMembers
+        IntentsBitField.Flags.GuildMembers,
+        IntentsBitField.Flags.MessageContent,
     ]
 });
 
@@ -54,4 +57,4 @@ loadModals(bot, false);
 
 scheduleChannelLock(bot.client, FRCIsraelId);
 
-client.login(process.env.TOKEN);
+client.login(getBotToken());

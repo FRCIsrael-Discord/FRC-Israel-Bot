@@ -2,5 +2,8 @@
   "token": "",
   "team roles": [],
   "ftc role": "",
-  "no team": ""
+  "no team": "",
+  "supportSettings": {
+    //TODO: finish json
+  }
 }

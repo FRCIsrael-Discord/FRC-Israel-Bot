@@ -10,6 +10,9 @@
     "rootDir": "./src",
     "esModuleInterop": true,
     "noImplicitAny": false,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules"]

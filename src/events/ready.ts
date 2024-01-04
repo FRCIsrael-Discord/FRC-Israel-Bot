@@ -1,10 +1,10 @@
-import { Client } from "discord.js"
+import { Client, Events } from "discord.js"
 import { IBot } from "../utils/interfaces/IBot"
 import { IEvent } from "../utils/interfaces/IEvent"
 import { logInfo } from "../utils/logger";
 
 module.exports = {
-    name: "ready",
+    name: Events.ClientReady,
     once: true,
     execute: async (bot: IBot, ...args: any) => {
         const { client, testServers, slashCommands } = bot;
