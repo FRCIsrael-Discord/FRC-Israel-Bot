@@ -1,6 +1,7 @@
 import { Client } from "discord.js"
 import { IBot } from "../utils/interfaces/IBot"
 import { IEvent } from "../utils/interfaces/IEvent"
+import { logInfo } from "../utils/logger";
 
 module.exports = {
     name: "ready",
@@ -10,11 +11,11 @@ module.exports = {
         testServers.forEach(async serverId => {
             const guild = client.guilds.cache.get(serverId);
             if (!guild) {
-                return console.log(`Server ${serverId} not found`);
+                return logInfo(`Server ${serverId} not found`);
             }
-    
+
             await guild.commands.set([...slashCommands.values()]);
         });
-        console.log("FRC Israel bot is now active!");
+        logInfo("FRC Israel bot is now active!");
     }
 } as IEvent

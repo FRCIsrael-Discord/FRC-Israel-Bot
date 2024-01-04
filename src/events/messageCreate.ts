@@ -2,12 +2,13 @@ import { Client, Collection, Message, TextChannel } from "discord.js";
 import { owners } from "..";
 import { IBot } from "../utils/interfaces/IBot";
 import { IEvent } from "../utils/interfaces/IEvent";
+import { logError } from "../utils/logger";
 
 module.exports = {
     name: 'messageCreate',
     once: false,
     execute: async function runAll(bot: IBot, message: Message) {
-        const { client, commands, owners} = bot;
+        const { client, commands, owners } = bot;
         if (!message.guild) return;
         if (message.author.bot) return;
 
@@ -37,7 +38,7 @@ module.exports = {
         try {
             await command.execute(bot, message);
         } catch (e) {
-            console.error(e)
+            logError(e);
         }
     }
 } as IEvent;

@@ -3,6 +3,7 @@ import path from "path";
 import { getFiles } from "../utils/filesReader";
 import { IBot } from "../utils/interfaces/IBot";
 import { IEvent } from "../utils/interfaces/IEvent";
+import { logInfo } from "../utils/logger";
 
 export function loadEvents(bot: IBot, reload: boolean) {
     const { client } = bot;
@@ -10,7 +11,7 @@ export function loadEvents(bot: IBot, reload: boolean) {
     const eventsPath = path.join(__dirname, "../events");
     let eventsFiles = getFiles(eventsPath, '.ts');
     if (eventsFiles.length === 0) {
-        console.log('No events found');
+        logInfo('No events found');
     }
 
     eventsFiles.forEach((fileName, index) => {
@@ -26,5 +27,5 @@ export function loadEvents(bot: IBot, reload: boolean) {
         }
     })
 
-    console.log(`Loaded ${eventsFiles.length} events`)
+    logInfo(`Loaded ${eventsFiles.length} events`)
 }

@@ -1,5 +1,5 @@
 import { Collection, CommandInteraction, Guild, GuildMember, Interaction, Role } from "discord.js";
-import { getFTCTeamRoleId, getNoTeamRoleId } from "./rolesJsonHandler";
+import { getFTCTeamRoleId, getNoTeamRoleId } from "./config";
 
 export async function renameMember(member: GuildMember, guild: Guild, nickname: string, teamNumber: string) {
     const newNick = `${nickname} | ${teamNumber}`;

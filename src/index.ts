@@ -1,6 +1,5 @@
-console.log("Starting bot...")
+logInfo("Starting bot...")
 import { Client, Collection, IntentsBitField } from 'discord.js';
-import dotenv from 'dotenv';
 import { loadEvents } from './handlers/eventsHandler';
 import { loadCommands } from './handlers/commandsHandler';
 import { loadSlashCommands } from './handlers/slashCommandsHandler';
@@ -13,7 +12,7 @@ import { loadButtons } from './handlers/buttonsHandler';
 import { IButton } from './utils/interfaces/IButton';
 import { IModal } from './utils/interfaces/IModal';
 import { loadModals } from './handlers/modalsHandler';
-dotenv.config();
+import { logInfo } from './utils/logger';
 
 const myTestServerId = '851789251754328064';
 const FRCIsraelId = '959144521621458974'

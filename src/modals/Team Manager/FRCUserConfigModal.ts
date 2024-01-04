@@ -1,7 +1,7 @@
 import { GuildMember, ModalSubmitInteraction, Role } from "discord.js";
 import { IBot } from "../../utils/interfaces/IBot";
 import { frcTeamList } from "../../utils/teamLists";
-import { getTeamRoles } from "../../utils/rolesJsonHandler";
+import { getTeamRoles } from "../../utils/config";
 import { addNoTeamRole, hasNoTeamRole, renameMember, setFRCRole } from "../../utils/userConfig";
 import { IModal } from "../../utils/interfaces/IModal";
 
@@ -55,7 +55,7 @@ module.exports = {
                     member.roles.add(role);
                 }
                 await addNoTeamRole(member, guild!);
-                
+
                 return await interaction.followUp({ content: 'Team role not found!' });
             }
 

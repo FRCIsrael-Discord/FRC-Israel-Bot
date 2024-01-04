@@ -3,10 +3,11 @@ import { getFiles } from "../utils/filesReader";
 import { IBot } from "../utils/interfaces/IBot";
 import { ISlashCommand } from "../utils/interfaces/ISlashCommand";
 import * as fs from "fs";
+import { logInfo } from "../utils/logger";
 
 export function loadSlashCommands(bot: IBot, reload: boolean) {
-    const { slashCommands} = bot;
-    
+    const { slashCommands } = bot;
+
     const commandsPath = path.join(__dirname, "../slashCommands");
     fs.readdirSync(commandsPath).forEach((category: string) => {
         const commandPath = path.join(commandsPath, category);
@@ -19,5 +20,5 @@ export function loadSlashCommands(bot: IBot, reload: boolean) {
             slashCommands.set(command.name, command)
         })
     })
-    console.log(`Loaded ${slashCommands.size} slash commands`)
+    logInfo(`Loaded ${slashCommands.size} slash commands`)
 }
