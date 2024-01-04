@@ -1,0 +1,1 @@
+export type SupportType = 'programming' | 'media' | 'modeling' | 'electronics' | 'strategy' | 'community' | 'pr';

@@ -1,15 +1,20 @@
 import * as fs from 'fs';
 import { logWarn } from './logger';
-import { RequireAtLeastOne } from './types/RequireAtLeastOne';
+import { SupportSetting, SupportType } from './types/support';
 
 interface ConfigObject {
     'token': string;
-    'roles': {
-        'teams': string[];
-        'noTeam': string;
-        'ftc': string;
+    'roles': RolesObject;
+    'supportSettings': {
+        [key in SupportType]: SupportSetting;
     };
 }
+
+interface RolesObject {
+    'teams': string[];
+    'noTeam': string;
+    'ftc': string;
+};
 
 
 const filePath = './config.json';
@@ -55,4 +60,13 @@ export function setNoTeamRoleId(roleId: string) {
 export function setFTCTeamRoleId(roleId: string) {
     config.roles.ftc = roleId;
     updateConfigFile();
+}
+
+export function setSupportSetting(supportType: SupportType, supportSetting: SupportSetting) {
+    config.supportSettings[supportType] = supportSetting;
+    updateConfigFile();
+}
+
+export function getSupportSetting(supportType: SupportType): SupportSetting {
+    return config.supportSettings[supportType];
 }
