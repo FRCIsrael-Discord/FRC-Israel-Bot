@@ -14,28 +14,28 @@ module.exports = {
         const channelId = message.channelId;
         const supportType: SupportType | undefined = getSupportRoleByChannelId(channelId);
         if (!supportType) {
-            return await message.reply("This channel is not a support channel!");
+            return await message.reply("צ'אנל זה הוא לא צ'אנל של עזרה!");
         }
 
         const cooldown = getTimeLeft(message.author.id);
         if (cooldown > 0) {
             const minutes = Math.floor(cooldown / 60000);
             const seconds = ((cooldown % 60000) / 1000).toFixed(0);
-            return await message.reply(`You can ping for help again in ${minutes}:${seconds.padStart(2, '0')} minutes!`);
+            return await message.reply(`את/ה יכול/ה לפנות לעזרה שוב בעוד ${minutes}:${seconds.padStart(2, '0')} דקות!`);
         } else {
             if (!message.reference) {
-                return await message.reply("You must reply to your question to ping for help!");
+                return await message.reply("עליך לשלוח את פקודה זו בתגובה לשאלה שלך!");
             } else {
                 const reference = await message.fetchReference();
                 const { author, content, channel } = reference;
                 if (author.id !== message.author.id) {
-                    return await message.reply("You must reply to a message sent by you!");
+                    return await message.reply("הודעה זו לא נשלחה על ידך.\nעליך לשלוח את פקודה זו בתגובה לשאלה שלך!");
                 }
 
                 const roleId = getSupportSetting(supportType)!.roleId;
                 const embed = new EmbedBuilder()
-                    .setTitle("Support Request")
-                    .setDescription(`**User:** ${author}\n**Question:** ${content}`)
+                    .setTitle("בקשת עזרה")
+                    .setDescription(`**נשאל על ידי:** ${author}\n**השאלה:** ${content}`)
                     .setFooter({
                         text: `Requested by ${message.author.tag}`,
                         iconURL: message.author.displayAvatarURL()
