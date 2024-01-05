@@ -26,6 +26,10 @@ module.exports = {
             } else {
                 const reference = await message.fetchReference();
                 const { author, content, channel } = reference;
+                if (author.id !== message.author.id) {
+                    return await message.reply("This must reply to a message sent by you!");
+                }
+
                 const roleId = getSupportSetting(supportType)!.roleId;
                 const embed = new EmbedBuilder()
                     .setTitle("Support Request")
