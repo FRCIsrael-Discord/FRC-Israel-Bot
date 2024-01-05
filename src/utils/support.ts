@@ -11,7 +11,7 @@ export function getTimeLeft(userId: string): number {
     return timer.timestamp - Date.now();
 }
 
-export function setCooldown(userId: string) {
+export function addCooldown(userId: string) {
     cooldownTimers.push({
         userId,
         timestamp: Date.now() + cooldownTime

@@ -1,8 +1,7 @@
-import { Message } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 import { ICommand } from "../../utils/interfaces/ICommand";
 import { IBot } from "../../utils/interfaces/IBot";
-import { getTimeLeft } from "../../utils/support";
-import { EmbedBuilder } from "@discordjs/builders";
+import { getTimeLeft, addCooldown } from "../../utils/support";
 import { getSupportRoleByChannelId, getSupportSetting } from "../../utils/config";
 import { SupportType } from "../../utils/types/support";
 
@@ -22,10 +21,10 @@ module.exports = {
         if (cooldown > 0) {
             return await message.reply(`You can ping for help again in ${Math.ceil(cooldown / 1000)} seconds!`);
         } else {
-            const reference = await message.fetchReference();
-            if (!reference) {
+            if (!message.reference) {
                 return await message.reply("You must reply to your question to ping for help!");
             } else {
+                const reference = await message.fetchReference();
                 const { author, content, channel } = reference;
                 const roleId = getSupportSetting(supportType)!.roleId;
                 const embed = new EmbedBuilder()
@@ -35,8 +34,10 @@ module.exports = {
                         text: `Requested by ${message.author.tag}`,
                         iconURL: message.author.displayAvatarURL()
                     })
+                    .setColor('Random')
                     .setTimestamp();
                 await channel.send({ content: `<@&${roleId}>`, embeds: [embed] });
+                addCooldown(message.author.id);
             }
         }
     },
