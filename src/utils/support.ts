@@ -3,7 +3,7 @@ const cooldownTimers: {
     timestamp: number;
 }[] = []
 
-const cooldownTime = 5 * 60 * 1000; // 5 minutes
+const cooldownTime = 10 * 60 * 1000;
 
 export function getTimeLeft(userId: string): number {
     const timer = cooldownTimers.find(timer => timer.userId === userId);

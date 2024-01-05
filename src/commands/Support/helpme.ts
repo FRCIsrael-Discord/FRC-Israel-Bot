@@ -19,7 +19,9 @@ module.exports = {
 
         const cooldown = getTimeLeft(message.author.id);
         if (cooldown > 0) {
-            return await message.reply(`You can ping for help again in ${Math.ceil(cooldown / 1000)} seconds!`);
+            const minutes = Math.floor(cooldown / 60000);
+            const seconds = ((cooldown % 60000) / 1000).toFixed(0);
+            return await message.reply(`You can ping for help again in ${minutes}:${seconds.padStart(2, '0')} minutes!`);
         } else {
             if (!message.reference) {
                 return await message.reply("You must reply to your question to ping for help!");
@@ -27,7 +29,7 @@ module.exports = {
                 const reference = await message.fetchReference();
                 const { author, content, channel } = reference;
                 if (author.id !== message.author.id) {
-                    return await message.reply("This must reply to a message sent by you!");
+                    return await message.reply("You must reply to a message sent by you!");
                 }
 
                 const roleId = getSupportSetting(supportType)!.roleId;
