@@ -13,6 +13,9 @@ module.exports = {
     execute: async (bot: IBot, message: Message) => {
         const { channel, author } = message;
         const supportChannelId = getSupportForum();
+        if (!supportChannelId) {
+            return await message.reply("לא הוגדר צ'אנל פורום!\nיש לפנות לצוות השרת בנושא זה.");
+        }
         if (!channel.isThread()) {
             return await message.reply("ניתן לבקש עזרה רק בצ'אנל מסוג פורום!")
         }
@@ -41,14 +44,14 @@ module.exports = {
 
             const tagChooserModel = new StringSelectMenuBuilder()
                 .setCustomId('supportTagChooser')
-                .setPlaceholder('בחר קטגוריה אחת בלבד')
+                .setPlaceholder('בחר קטגוריה')
                 .addOptions(availableTags.map(tag => (
                     { label: `${tag.name} ${tag.emoji?.name}`, value: tag.name }
                 )))
 
             const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(tagChooserModel);
 
-            return await channel.send({ content: 'יש לבחור עבור הפוסט קטגוריה אחת בלבד!', components: [row] });
+            return await channel.send({ content: 'יש לבחור עבור הפוסט קטגוריה אחת בלבד', components: [row] });
         }
 
         const supportType = Object.keys(forumSupportLabels).find(key => forumSupportLabels[key] == appliedTags[0].name) as SupportType | undefined;
@@ -72,7 +75,9 @@ module.exports = {
                 }
 
                 const roleId = getSupportRole(supportType)!;
+                if (!roleId) return await message.reply(`לא הוגדר רול תמיכה עבור ${forumSupportLabels[supportType]}!\nיש לפנות לצוות השרת בנושא זה.`);
                 const role = await channel.guild.roles.fetch(roleId);
+                if (!role) return await message.reply(`רול התמיכה עבור ${forumSupportLabels[supportType]} לא נמצא בשרת!\nיש לפנות לצוות השרת בנושא זה.`);
                 role?.members.forEach(member => {
                     channel.members.add(member.id);
                 });

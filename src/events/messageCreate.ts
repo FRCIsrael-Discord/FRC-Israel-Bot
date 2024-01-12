@@ -37,7 +37,6 @@ module.exports = {
         try {
             await command.execute(bot, message);
         } catch (e) {
-            console.log(e);
             logError(e);
         }
     }
