@@ -1,6 +1,7 @@
 import { ApplicationCommand, ApplicationCommandOptionType, CommandInteraction } from "discord.js"
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
+import { logError } from "../../utils/logger";
 
 module.exports = {
     name: "unregister",
@@ -22,11 +23,11 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
         const { options } = interaction;
         const { slashCommands } = bot;
-        const command = options.getString('command')!;
+        const command = options.getString('command', true);
 
         try {
             if (!slashCommands.has(command)) {
-                return interaction.editReply({content: "This command does not exist!"});
+                return interaction.editReply({ content: "This command does not exist!" });
             } else {
                 const cmd = slashCommands.get(command)!;
                 const guild = interaction.guild;
@@ -34,12 +35,12 @@ module.exports = {
                 const clientCommand: ApplicationCommand = guildCommands?.find(c => c.name === command)!;
                 await guild?.commands.delete(clientCommand.id);
                 slashCommands.delete(command);
-                await interaction.editReply({content: `Command ${cmd.name} has been unregistered!`});
+                await interaction.editReply({ content: `Command ${cmd.name} has been unregistered!` });
             }
         } catch (e) {
-            console.error(e);
+            logError(e);
             try {
-                return interaction.editReply({content:"An error occurred while trying to unregister the command."});
+                return interaction.editReply({ content: "An error occurred while trying to unregister the command." });
             } catch (e) {
                 return interaction.editReply("An error occurred while trying to unregister the command.");
             }

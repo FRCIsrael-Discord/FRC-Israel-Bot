@@ -1,7 +1,6 @@
 import { ApplicationCommandOptionType, ButtonStyle, CommandInteraction, GuildMember, TextChannel } from 'discord.js';
 import { IBot } from '../../utils/interfaces/IBot';
 import { ISlashCommand } from '../../utils/interfaces/ISlashCommand';
-import { addTeamRole, getNoTeamRoleId, getTeamRoles, isTeamRoleExists, setFTCTeamRoleId, setNoTeamRoleId } from '../../utils/rolesJsonHandler';
 import { ActionRowBuilder, ButtonBuilder } from '@discordjs/builders';
 
 module.exports = {
@@ -21,8 +20,8 @@ module.exports = {
             required: true,
         }
     ],
-    
-    execute: async (bot: IBot, interaction: CommandInteraction) => { 
+
+    execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         const { options, guild } = interaction;
 
@@ -33,9 +32,9 @@ module.exports = {
 
         const channel = guild?.channels.cache.get(options.getString('channel-id')!) as TextChannel;
         if (!channel) return await interaction.editReply({ content: 'Channel not found!' });
-        
+
         await channel.send({ content: "Choose your FIRST program to set your team role and nickname:", components: [buttons] }).catch(async () => {
-            return await interaction.editReply({ content: 'I don\'t have permissions to send messages in that channel!' });  
+            return await interaction.editReply({ content: 'I don\'t have permissions to send messages in that channel!' });
         });
         return await interaction.editReply({ content: 'Buttons added to the channel!' });
     }

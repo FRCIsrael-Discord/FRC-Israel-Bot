@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, CommandInteraction, GuildMember } from 'discord.js';
 import { IBot } from '../../utils/interfaces/IBot';
 import { ISlashCommand } from '../../utils/interfaces/ISlashCommand';
-import { addTeamRole, getNoTeamRoleId, getTeamRoles, isTeamRoleExists, setFTCTeamRoleId, setNoTeamRoleId } from '../../utils/rolesJsonHandler';
+import { setTeamRoles, getNoTeamRoleId, getTeamRoles, isTeamRoleExists, setFTCTeamRoleId, setNoTeamRoleId } from '../../utils/config';
 import { frcTeamList } from '../../utils/teamLists';
 
 module.exports = {
@@ -47,8 +47,8 @@ module.exports = {
         }
 
     ],
-    
-    execute: async (bot: IBot, interaction: CommandInteraction) => { 
+
+    execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         const { options, guild } = interaction;
         const member: GuildMember = interaction.member as GuildMember
@@ -56,21 +56,23 @@ module.exports = {
         if (subCommand == 'noteam') {
             const role = options.getRole('role')!;
             setNoTeamRoleId(role.id);
-            await interaction.editReply({content: `No Team role id has been set to ${role.id}`});
+            await interaction.editReply({ content: `No Team role id has been set to ${role.id}` });
         } else if (subCommand == 'ftc') {
             const role = options.getRole('role')!;
             setFTCTeamRoleId(role.id);
-            await interaction.editReply({content: `FTC role id has been set to ${role.id}`});
+            await interaction.editReply({ content: `FTC role id has been set to ${role.id}` });
         } else if (subCommand == 'teams') {
             const guildRoles = await guild!.roles.fetch();
             let amount = 0;
+            const teamRoles: string[] = [];
             guildRoles.forEach(role => {
                 if (frcTeamList.includes(role.name.split(" | ")[1]) && !isTeamRoleExists(role.id)) {
                     amount++;
-                    addTeamRole(role.id);
+                    teamRoles.push(role.id);
                 }
             });
-            await interaction.editReply({content: `Added ${amount} new team roles.`});
+            setTeamRoles(teamRoles);
+            await interaction.editReply({ content: `Added ${amount} new team roles.` });
         }
     }
 } as ISlashCommand;

@@ -8,7 +8,6 @@
     "strict": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "watch": true,
     "esModuleInterop": true,
     "noImplicitAny": false,
   },

@@ -3,10 +3,11 @@ import path from "path";
 import { getFiles } from "../utils/filesReader";
 import { IBot } from "../utils/interfaces/IBot";
 import { IButton } from "../utils/interfaces/IButton";
+import { logInfo } from "../utils/logger";
 
 export function loadButtons(bot: IBot, reload: boolean) {
     const { buttons } = bot;
-    
+
     const buttonsPath = path.join(__dirname, "../buttons");
     fs.readdirSync(buttonsPath).forEach((category: string) => {
         const buttonPath = path.join(buttonsPath, category);
@@ -19,5 +20,5 @@ export function loadButtons(bot: IBot, reload: boolean) {
             buttons.set(button.id, button)
         })
     })
-    console.log(`Loaded ${buttons.size} buttons`)
+    logInfo(`Loaded ${buttons.size} buttons`)
 }

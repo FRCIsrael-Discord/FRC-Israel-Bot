@@ -3,10 +3,11 @@ import path from "path";
 import { getFiles } from "../utils/filesReader";
 import { IBot } from "../utils/interfaces/IBot";
 import { IModal } from "../utils/interfaces/IModal";
+import { logInfo } from "../utils/logger";
 
 export function loadModals(bot: IBot, reload: boolean) {
     const { modals } = bot;
-    
+
     const modalsPath = path.join(__dirname, "../modals");
     fs.readdirSync(modalsPath).forEach((category: string) => {
         const modalPath = path.join(modalsPath, category);
@@ -19,5 +20,5 @@ export function loadModals(bot: IBot, reload: boolean) {
             modals.set(modal.id, modal)
         })
     })
-    console.log(`Loaded ${modals.size} modals`)
+    logInfo(`Loaded ${modals.size} modals`)
 }

@@ -3,6 +3,7 @@ import { getFiles } from "../utils/filesReader";
 import * as fs from "fs";
 import { IBot } from "../utils/interfaces/IBot";
 import { ICommand } from "../utils/interfaces/ICommand";
+import { logInfo } from "../utils/logger";
 
 export function loadCommands(bot: IBot, reload: boolean) {
     const { commands, client } = bot;
@@ -17,5 +18,5 @@ export function loadCommands(bot: IBot, reload: boolean) {
             commands.set(command.name, command)
         })
     })
-    console.log(`Loaded ${commands.size} commands`)
+    logInfo(`Loaded ${commands.size} commands`)
 }
