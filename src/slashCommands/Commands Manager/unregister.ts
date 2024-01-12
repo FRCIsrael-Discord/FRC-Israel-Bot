@@ -23,7 +23,7 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
         const { options } = interaction;
         const { slashCommands } = bot;
-        const command = options.getString('command')!;
+        const command = options.getString('command', true);
 
         try {
             if (!slashCommands.has(command)) {

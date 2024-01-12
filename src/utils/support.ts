@@ -3,7 +3,8 @@ const cooldownTimers: {
     timestamp: number;
 }[] = []
 
-const cooldownTime = 10 * 60 * 1000;
+//TODO: change cooldownTime to 10 minutes
+const cooldownTime = 0;
 
 export function getTimeLeft(userId: string): number {
     const timer = cooldownTimers.find(timer => timer.userId === userId);

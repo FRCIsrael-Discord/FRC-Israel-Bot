@@ -6,7 +6,10 @@ interface ConfigObject {
     'token': string;
     'roles': RolesObject;
     'supportSettings': {
-        [key in SupportType]: SupportSetting;
+        'settings': {
+            [key in SupportType]: SupportSetting;
+        },
+        'channelId': string;
     };
 }
 
@@ -26,7 +29,7 @@ if (!fs.existsSync(filePath)) {
     process.exit(1);
 }
 
-const config = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+const config: ConfigObject = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
 function updateConfigFile() {
     fs.writeFileSync(filePath, JSON.stringify(config, null, 2));
@@ -68,14 +71,24 @@ export function setFTCTeamRoleId(roleId: string) {
 }
 
 export function setSupportSetting(supportType: SupportType, supportSetting: SupportSetting) {
-    config.supportSettings[supportType] = supportSetting;
+    config.supportSettings.settings[supportType] = supportSetting;
     updateConfigFile();
 }
 
 export function getSupportSetting(supportType: SupportType): SupportSetting | undefined {
-    return config.supportSettings[supportType];
+    return config.supportSettings.settings[supportType];
 }
 
 export function getSupportRoleByChannelId(channelId: string): SupportType | undefined {
-    return Object.keys(config.supportSettings).find(supportType => config.supportSettings[supportType as SupportType].channelId === channelId) as SupportType | undefined;
+    const supportSettings = config.supportSettings.settings;
+    return Object.keys(supportSettings).find(supportType => supportSettings[supportType as SupportType].channelId === channelId) as SupportType | undefined;
+}
+
+export function getSupportForum() {
+    return config.supportSettings.channelId;
+}
+
+export function setSupportForum(channelId: string) {
+    config.supportSettings.channelId = channelId;
+    updateConfigFile();
 }

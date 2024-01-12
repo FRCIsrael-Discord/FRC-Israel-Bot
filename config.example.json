@@ -1,36 +1,39 @@
 {
-  "token": "",
-  "team roles": [],
-  "ftc role": "",
-  "no team": "",
-  "supportSettings": {
-    "programming": {
-      "role": "",
-      "channel": ""
-    },
-    "media": {
-      "role": "",
-      "channel": ""
-    },
-    "modeling": {
-      "role": "",
-      "channel": ""
-    },
-    "electronics": {
-      "role": "",
-      "channel": ""
-    },
-    "strategy": {
-      "role": "",
-      "channel": ""
-    },
-    "community": {
-      "role": "",
-      "channel": ""
-    },
-    "pr": {
-      "role": "",
-      "channel": ""
+    "token": "",
+    "team roles": [],
+    "ftc role": "",
+    "no team": "",
+    "supportSettings": {
+        "channelId": "",
+        "settings": {
+            "programming": {
+                "role": "",
+                "channel": ""
+            },
+            "media": {
+                "role": "",
+                "channel": ""
+            },
+            "modeling": {
+                "role": "",
+                "channel": ""
+            },
+            "electronics": {
+                "role": "",
+                "channel": ""
+            },
+            "strategy": {
+                "role": "",
+                "channel": ""
+            },
+            "community": {
+                "role": "",
+                "channel": ""
+            },
+            "pr": {
+                "role": "",
+                "channel": ""
+            }
+        }
     }
-  }
 }
