@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ChannelType, EmbedBuilder, Message, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, StringSelectMenuBuilder, ThreadOnlyChannel } from "discord.js";
+import { ActionRowBuilder, ChannelType, ComponentType, EmbedBuilder, Message, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, StringSelectMenuBuilder, ThreadOnlyChannel } from "discord.js";
 import { getSupportForum, getSupportRole } from "../../utils/config";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ICommand } from "../../utils/interfaces/ICommand";
@@ -34,24 +34,37 @@ module.exports = {
         if (appliedTags.length > 1) {
             const tooManyTagsEmbed = new EmbedBuilder()
                 .setTitle('שגיאה בעת בקשת עזרה')
-                .setDescription('על הפוסט להיות מוגדר תחת קטגוריה אחת בלבד.\nהקטגוריות המוגדרו כרגע עבור הפוסט:')
+                .setDescription('על הפוסט להיות מוגדר תחת קטגוריה אחת בלבד.\nהקטגוריות המוגדרות כרגע עבור הפוסט:')
                 .addFields(appliedTags.map(tag => (
                     { name: '\u0085', value: `${tag.name} ${tag.emoji?.name}` }
                 )))
                 .setColor('Red')
                 .setTimestamp();
-            await message.reply({ embeds: [tooManyTagsEmbed] });
 
             const tagChooserModel = new StringSelectMenuBuilder()
-                .setCustomId('supportTagChooser')
+                .setCustomId('supportTagChooserModal')
                 .setPlaceholder('בחר קטגוריה')
                 .addOptions(availableTags.map(tag => (
                     { label: `${tag.name} ${tag.emoji?.name}`, value: tag.name }
                 )))
 
             const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(tagChooserModel);
+            const reply = await message.reply({ embeds: [tooManyTagsEmbed], components: [row] });
 
-            return await channel.send({ content: 'יש לבחור עבור הפוסט קטגוריה אחת בלבד', components: [row] });
+            const collector = reply.createMessageComponentCollector({
+                componentType: ComponentType.StringSelect,
+                filter: (interaction) => interaction.customId === 'supportTagChooserModal' && interaction.user.id === message.author.id,
+            });
+
+            collector.on('collect', async interaction => {
+                const tag = availableTags.find(tag => tag.name === interaction.values[0]);
+                if (!tag) return;
+
+                channel.setAppliedTags([tag.id]);
+                await interaction.reply({ content: `הקטגוריה ${tag.name} נבחרה בהצלחה!\nכעת ניתן לבקש עזרה על ידי שליחת הפקודה בתגובה לשאלה שלך.` });
+            });
+            return;
+
         }
 
         const supportType = Object.keys(forumSupportLabels).find(key => forumSupportLabels[key] == appliedTags[0].name) as SupportType | undefined;
