@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ChannelType, EmbedBuilder, Message, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, StringSelectMenuBuilder, ThreadOnlyChannel } from "discord.js";
-import { getSupportForum, getSupportSetting } from "../../utils/config";
+import { getSupportForum, getSupportRole } from "../../utils/config";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ICommand } from "../../utils/interfaces/ICommand";
 import { addCooldown, getTimeLeft } from "../../utils/support";
@@ -71,7 +71,7 @@ module.exports = {
                     return await message.reply("הודעה זו לא נשלחה על ידך.\nעליך לשלוח את פקודה זו בתגובה לשאלה שלך!");
                 }
 
-                const roleId = getSupportSetting(supportType)!.roleId;
+                const roleId = getSupportRole(supportType)!;
                 const role = await channel.guild.roles.fetch(roleId);
                 role?.members.forEach(member => {
                     channel.members.add(member.id);

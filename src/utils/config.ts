@@ -1,13 +1,13 @@
 import * as fs from 'fs';
 import { logWarn } from './logger';
-import { SupportSetting, SupportType } from './types/support';
+import { SupportType } from './types/support';
 
 interface ConfigObject {
     'token': string;
     'roles': RolesObject;
     'supportSettings': {
-        'settings': {
-            [key in SupportType]: SupportSetting;
+        'roles': {
+            [key in SupportType]: string;
         },
         'channelId': string;
     };
@@ -70,18 +70,13 @@ export function setFTCTeamRoleId(roleId: string) {
     updateConfigFile();
 }
 
-export function setSupportSetting(supportType: SupportType, supportSetting: SupportSetting) {
-    config.supportSettings.settings[supportType] = supportSetting;
+export function setSupportRole(supportType: SupportType, roleId: string) {
+    config.supportSettings.roles[supportType] = roleId;
     updateConfigFile();
 }
 
-export function getSupportSetting(supportType: SupportType): SupportSetting | undefined {
-    return config.supportSettings.settings[supportType];
-}
-
-export function getSupportRoleByChannelId(channelId: string): SupportType | undefined {
-    const supportSettings = config.supportSettings.settings;
-    return Object.keys(supportSettings).find(supportType => supportSettings[supportType as SupportType].channelId === channelId) as SupportType | undefined;
+export function getSupportRole(supportType: SupportType): string | undefined {
+    return config.supportSettings.roles[supportType];
 }
 
 export function getSupportForum() {
