@@ -88,7 +88,7 @@ module.exports = {
                 return await interaction.editReply({ content: "An error occurred while updating support settings!" });
             }
 
-            await interaction.editReply({ content: `Support settings for ALL have been updated!\nRole: ${role}\nChannel: ${type}` });
+            await interaction.editReply({ content: `Support role for ${type} have been updated!\nRole: ${role}` });
         } else if (options.getSubcommand() === 'cooldown') {
             const cooldown = options.getInteger('cooldown', true);
 
