@@ -36,7 +36,7 @@ module.exports = {
                 .setTitle('שגיאה בעת בקשת עזרה')
                 .setDescription('על הפוסט להיות מוגדר תחת קטגוריה אחת בלבד.\nהקטגוריות המוגדרות כרגע עבור הפוסט:')
                 .addFields(appliedTags.map(tag => (
-                    { name: '\u0085', value: `${tag.name} ${tag.emoji?.name}` }
+                    { name: '\u0085', value: `${tag.name} <:${tag.emoji?.name}:${tag.emoji?.id}>` }
                 )))
                 .setColor('Red')
                 .setTimestamp();
@@ -45,7 +45,7 @@ module.exports = {
                 .setCustomId('supportTagChooserModal')
                 .setPlaceholder('בחר קטגוריה')
                 .addOptions(availableTags.map(tag => (
-                    { label: `${tag.name} ${tag.emoji?.name}`, value: tag.name }
+                    { label: `${tag.name} <:${tag.emoji?.name}:${tag.emoji?.id}>`, value: tag.name }
                 )))
 
             const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(tagChooserModel);
