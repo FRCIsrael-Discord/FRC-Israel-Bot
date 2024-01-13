@@ -109,9 +109,6 @@ module.exports = {
                 if (!roleId) return await message.reply(`לא הוגדר רול תמיכה עבור ${forumSupportLabels[supportType]}!\nיש לפנות לצוות השרת בנושא זה.`);
                 const role = await channel.guild.roles.fetch(roleId);
                 if (!role) return await message.reply(`רול התמיכה עבור ${forumSupportLabels[supportType]} לא נמצא בשרת!\nיש לפנות לצוות השרת בנושא זה.`);
-                role?.members.forEach(member => {
-                    channel.members.add(member.id);
-                });
 
                 const embed = new EmbedBuilder()
                     .setTitle("בקשת עזרה")
