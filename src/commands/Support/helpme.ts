@@ -51,7 +51,7 @@ module.exports = {
                 .setCustomId('supportTagChooserModal')
                 .setPlaceholder('בחר קטגוריה')
                 .addOptions(availableTags.map(tag => (
-                    { label: `${tag.name} ${getEmoji(tag.emoji!)}`, value: tag.name }
+                    { label: `${tag.name}`, value: tag.name }
                 )))
 
             const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(tagChooserModel);
