@@ -1,9 +1,9 @@
+import { getSupportCooldown } from "./config";
+
 const cooldownTimers: {
     userId: string;
     timestamp: number;
 }[] = []
-
-const cooldownTime = 10 * 60 * 1000;
 
 export function getTimeLeft(userId: string): number {
     const timer = cooldownTimers.find(timer => timer.userId === userId);
@@ -12,12 +12,14 @@ export function getTimeLeft(userId: string): number {
 }
 
 export function addCooldown(userId: string) {
+    const cooldownTime = getSupportCooldown() || 0;
+
     cooldownTimers.push({
         userId,
-        timestamp: Date.now() + cooldownTime
+        timestamp: Date.now() + cooldownTime * 1000
     })
     setTimeout(() => {
         const index = cooldownTimers.findIndex(timer => timer.userId === userId);
         if (index !== -1) cooldownTimers.splice(index, 1);
-    }, cooldownTime);
+    }, cooldownTime * 1000);
 }

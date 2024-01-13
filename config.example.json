@@ -5,6 +5,7 @@
     "no team": "",
     "supportSettings": {
         "channelId": "",
+        "cooldown": 0,
         "roles": {
             "programming": "",
             "media": "",
