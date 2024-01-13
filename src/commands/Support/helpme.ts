@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ChannelType, ComponentType, EmbedBuilder, GuildForumTagEmoji, Message, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, StringSelectMenuBuilder, ThreadOnlyChannel } from "discord.js";
+import { ActionRowBuilder, ChannelType, ComponentType, EmbedBuilder, GuildForumTagEmoji, Message, MessageActionRowComponentBuilder, StringSelectMenuBuilder } from "discord.js";
 import { getSupportForum, getSupportRole } from "../../utils/config";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ICommand } from "../../utils/interfaces/ICommand";
@@ -31,6 +31,10 @@ module.exports = {
         const forumChannel = channel.parent!;
         if (forumChannel.id !== supportChannelId) {
             return await message.reply(`ניתן לבקש עזרה רק על שאלות בצ'אנל <#${supportChannelId}>!`);
+        }
+
+        if (message.author.id !== channel.ownerId) {
+            return await message.reply("רק הכותב/ת של הפוסט יכול/ה לבקש עזרה!");
         }
 
         const availableTags = forumChannel.availableTags;
