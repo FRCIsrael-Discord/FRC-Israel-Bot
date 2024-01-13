@@ -1,8 +1,10 @@
 {
     "token": "",
-    "team roles": [],
-    "ftc role": "",
-    "no team": "",
+    "roles": {
+        "teams": "",
+        "noTeam": "",
+        "ftc": ""
+    },
     "supportSettings": {
         "channelId": "",
         "cooldown": 0,
