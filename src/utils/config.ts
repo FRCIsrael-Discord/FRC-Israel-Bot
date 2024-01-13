@@ -6,10 +6,11 @@ interface ConfigObject {
     'token': string;
     'roles': RolesObject;
     'supportSettings': {
+        'channelId': string,
+        'cooldown': number,
         'roles': {
             [key in SupportType]: string;
-        },
-        'channelId': string;
+        }
     };
 }
 
@@ -77,6 +78,15 @@ export function setSupportRole(supportType: SupportType, roleId: string) {
 
 export function getSupportRole(supportType: SupportType): string | undefined {
     return config.supportSettings.roles[supportType];
+}
+
+export function getSupportCooldown(): number {
+    return config.supportSettings.cooldown;
+}
+
+export function setSupportCooldown(cooldown: number) {
+    config.supportSettings.cooldown = cooldown;
+    updateConfigFile();
 }
 
 export function getSupportForum() {

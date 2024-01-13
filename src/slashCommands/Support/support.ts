@@ -1,13 +1,12 @@
-import { ApplicationCommand, ApplicationCommandOptionType, ChannelType, CommandInteraction } from "discord.js"
+import { ApplicationCommandOptionType, ChannelType, CommandInteraction } from "discord.js"
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 import { logError } from "../../utils/logger";
 import { SupportType, forumSupportLabels } from "../../utils/types/support";
-import { setSupportForum, setSupportRole } from "../../utils/config";
-import { channel } from "diagnostics_channel";
+import { setSupportCooldown, setSupportForum, setSupportRole } from "../../utils/config";
 
 module.exports = {
-    name: "config",
+    name: "support",
     category: "Support",
     ephemeral: true,
     description: "Configure support settings",
@@ -47,6 +46,20 @@ module.exports = {
                     channelTypes: [ChannelType.GuildForum]
                 }
             ]
+        },
+        {
+            name: 'cooldown',
+            description: "Configure support cooldown",
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: 'cooldown',
+                    description: "The support cooldown to set (in seconds)",
+                    type: ApplicationCommandOptionType.Integer,
+                    required: true,
+                    minValue: 0,
+                }
+            ]
         }
     ],
     execute: async (bot: IBot, interaction: CommandInteraction) => {
@@ -76,6 +89,16 @@ module.exports = {
             }
 
             await interaction.editReply({ content: `Support settings for ALL have been updated!\nRole: ${role}\nChannel: ${type}` });
+        } else if (options.getSubcommand() === 'cooldown') {
+            const cooldown = options.getInteger('cooldown', true);
+
+            try {
+                setSupportCooldown(cooldown);
+                await interaction.editReply({ content: `Support cooldown has been updated!\nCooldown: ${cooldown}` });
+            } catch (err) {
+                logError(err);
+                return await interaction.editReply({ content: "An error occurred while updating support settings!" });
+            }
         }
     }
 } as ISlashCommand;
