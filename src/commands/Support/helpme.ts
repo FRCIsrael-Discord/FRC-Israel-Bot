@@ -59,7 +59,15 @@ module.exports = {
 
             const collector = reply.createMessageComponentCollector({
                 componentType: ComponentType.StringSelect,
-                filter: (interaction) => interaction.customId === 'supportTagChooserModal' && interaction.user.id === message.author.id,
+                filter: (interaction) => {
+                    if (interaction.customId !== 'supportTagChooserModal') return false;
+                    if (interaction.user.id !== message.author.id) {
+                        interaction.reply({ content: 'רק כותב/ת של הפוסט יכול/ה לבחור קטגוריה!', ephemeral: true });
+                        return false;
+                    }
+                    return true;
+                }
+                ,
             });
 
             collector.on('collect', async interaction => {
