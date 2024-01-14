@@ -5,11 +5,6 @@ import { getSupportForum, getSupportRole } from "../../utils/config";
 import { forumSupportLabels } from "../../utils/types/support";
 import { addCooldown, getTimeLeft } from "../../utils/support";
 
-function getEmoji(emoji: GuildForumTagEmoji) {
-    if (emoji.id === null) return emoji.name;
-    return `<:${emoji.name}:${emoji.id}>`;
-}
-
 module.exports = {
     name: "helpme",
     category: "Support",
@@ -43,8 +38,12 @@ module.exports = {
             .setCustomId('supportTagChooserModal')
             .setPlaceholder('בחר/י קטגוריה')
             .addOptions(supportChannel.availableTags.map(tag => (
-                { label: `${tag.name}`, value: tag.name, emoji: { name: tag.emoji!.name, id: tag.emoji!.id, animated: false } as APIMessageComponentEmoji }
-            )))
+                {
+                    label: `${tag.name}`,
+                    value: tag.name,
+                    emoji: { animated: false, id: tag.emoji?.id || undefined, name: tag.emoji?.name || undefined }
+                }
+            )));
 
         const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(tagChooserModel);
         const reply = await interaction.editReply({ components: [row] });
