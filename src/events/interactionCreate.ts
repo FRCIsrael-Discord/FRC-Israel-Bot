@@ -57,15 +57,12 @@ module.exports = {
             });
         } else if (interaction.isModalSubmit()) {
             const modal = modals.get(interaction.customId);
+            if (!modal) return;
+
             if (modal?.deferReply) {
                 await interaction.deferReply({ ephemeral: modal?.ephemeral || false }).catch((err: Error) => {
                     logError(err.message);
                 });
-            }
-
-            if (!modal) {
-                if (interaction.deferred) return await interaction.followUp("This modal does not exist!");
-                return await interaction.reply("This modal does not exist!");
             }
 
             await modal.execute(bot, interaction).catch((err: Error) => {
