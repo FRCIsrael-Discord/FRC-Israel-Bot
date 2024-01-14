@@ -1,9 +1,14 @@
-import { ActionRowBuilder, ChannelType, CommandInteraction, ComponentType, EmbedBuilder, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, ModalBuilder, StringSelectMenuBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
+import { APIMessageComponentEmoji, ActionRowBuilder, ChannelType, CommandInteraction, ComponentType, EmbedBuilder, GuildForumTagEmoji, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 import { getSupportForum, getSupportRole } from "../../utils/config";
 import { forumSupportLabels } from "../../utils/types/support";
 import { addCooldown, getTimeLeft } from "../../utils/support";
+
+function getEmoji(emoji: GuildForumTagEmoji) {
+    if (emoji.id === null) return emoji.name;
+    return `<:${emoji.name}:${emoji.id}>`;
+}
 
 module.exports = {
     name: "helpme",
@@ -38,7 +43,7 @@ module.exports = {
             .setCustomId('supportTagChooserModal')
             .setPlaceholder('בחר/י קטגוריה')
             .addOptions(supportChannel.availableTags.map(tag => (
-                { label: `${tag.name} ${tag.emoji?.name}`, value: tag.name }
+                { label: `${tag.name}`, value: tag.name, emoji: { name: tag.emoji!.name, id: tag.emoji!.id, animated: false } as APIMessageComponentEmoji }
             )))
 
         const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(tagChooserModel);
