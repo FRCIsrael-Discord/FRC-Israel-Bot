@@ -1,9 +1,14 @@
-import { ActionRowBuilder, ChannelType, ComponentType, EmbedBuilder, Message, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, StringSelectMenuBuilder, ThreadOnlyChannel } from "discord.js";
+import { ActionRowBuilder, ChannelType, ComponentType, EmbedBuilder, GuildForumTagEmoji, Message, MessageActionRowComponentBuilder, StringSelectMenuBuilder } from "discord.js";
 import { getSupportForum, getSupportRole } from "../../utils/config";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ICommand } from "../../utils/interfaces/ICommand";
 import { addCooldown, getTimeLeft } from "../../utils/support";
 import { SupportType, forumSupportLabels } from "../../utils/types/support";
+
+function getEmoji(emoji: GuildForumTagEmoji) {
+    if (emoji.id === null) return emoji.name;
+    return `<:${emoji.name}:${emoji.id}>`;
+}
 
 module.exports = {
     category: "Support",
@@ -28,15 +33,20 @@ module.exports = {
             return await message.reply(`ניתן לבקש עזרה רק על שאלות בצ'אנל <#${supportChannelId}>!`);
         }
 
+        if (message.author.id !== channel.ownerId) {
+            return await message.reply("רק הכותב/ת של הפוסט יכול/ה לבקש עזרה!");
+        }
+
         const availableTags = forumChannel.availableTags;
         const appliedTags = availableTags.filter(tag => channel.appliedTags.includes(tag.id));
 
         if (appliedTags.length > 1) {
+
             const tooManyTagsEmbed = new EmbedBuilder()
                 .setTitle('שגיאה בעת בקשת עזרה')
                 .setDescription('על הפוסט להיות מוגדר תחת קטגוריה אחת בלבד.\nהקטגוריות המוגדרות כרגע עבור הפוסט:')
                 .addFields(appliedTags.map(tag => (
-                    { name: '\u0085', value: `${tag.name} ${tag.emoji?.name}` }
+                    { name: '\u0085', value: `${tag.name} ${getEmoji(tag.emoji!)}` }
                 )))
                 .setColor('Red')
                 .setTimestamp();
@@ -45,7 +55,7 @@ module.exports = {
                 .setCustomId('supportTagChooserModal')
                 .setPlaceholder('בחר קטגוריה')
                 .addOptions(availableTags.map(tag => (
-                    { label: `${tag.name} ${tag.emoji?.name}`, value: tag.name }
+                    { label: `${tag.name}`, value: tag.name }
                 )))
 
             const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(tagChooserModel);
@@ -53,7 +63,15 @@ module.exports = {
 
             const collector = reply.createMessageComponentCollector({
                 componentType: ComponentType.StringSelect,
-                filter: (interaction) => interaction.customId === 'supportTagChooserModal' && interaction.user.id === message.author.id,
+                filter: (interaction) => {
+                    if (interaction.customId !== 'supportTagChooserModal') return false;
+                    if (interaction.user.id !== message.author.id) {
+                        interaction.reply({ content: 'רק כותב/ת של הפוסט יכול/ה לבחור קטגוריה!', ephemeral: true });
+                        return false;
+                    }
+                    return true;
+                }
+                ,
             });
 
             collector.on('collect', async interaction => {
@@ -91,9 +109,6 @@ module.exports = {
                 if (!roleId) return await message.reply(`לא הוגדר רול תמיכה עבור ${forumSupportLabels[supportType]}!\nיש לפנות לצוות השרת בנושא זה.`);
                 const role = await channel.guild.roles.fetch(roleId);
                 if (!role) return await message.reply(`רול התמיכה עבור ${forumSupportLabels[supportType]} לא נמצא בשרת!\nיש לפנות לצוות השרת בנושא זה.`);
-                role?.members.forEach(member => {
-                    channel.members.add(member.id);
-                });
 
                 const embed = new EmbedBuilder()
                     .setTitle("בקשת עזרה")
