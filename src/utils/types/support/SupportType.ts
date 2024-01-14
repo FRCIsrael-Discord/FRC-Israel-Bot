@@ -1,4 +1,4 @@
-export const supportTypes = ['programming', 'media', 'modeling', 'electronics', 'strategy', 'community', 'pr'] as const;
+export const supportTypes = ['programming', 'media', 'modeling', 'mechanics', 'electronics', 'strategy', 'community', 'pr'] as const;
 export const forumSupportLabels = {
     programming: 'תכנות',
     media: 'מדיה',
