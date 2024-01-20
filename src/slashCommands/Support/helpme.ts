@@ -39,8 +39,12 @@ module.exports = {
             .setCustomId('supportTagChooserModal')
             .setPlaceholder('בחר/י קטגוריה')
             .addOptions(supportChannel.availableTags.map(tag => (
-                { label: `${tag.name} ${tag.emoji?.name}`, value: tag.name }
-            )))
+                {
+                    label: `${tag.name}`,
+                    value: tag.name,
+                    emoji: { animated: false, id: tag.emoji?.id || undefined, name: tag.emoji?.name || undefined }
+                }
+            )));
 
         const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(tagChooserModel);
         const reply = await interaction.editReply({ components: [row] });
