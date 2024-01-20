@@ -1,9 +1,10 @@
-import { APIMessageComponentEmoji, ActionRowBuilder, ChannelType, CommandInteraction, ComponentType, EmbedBuilder, GuildForumTagEmoji, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
+import { ActionRowBuilder, ChannelType, CommandInteraction, ComponentType, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, ModalBuilder, StringSelectMenuBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
+import { getSupportForum, getSupportRole } from "../../utils/config";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { getSupportForum, getSupportRole } from "../../utils/config";
-import { forumSupportLabels } from "../../utils/types/support";
+import { logError } from "../../utils/logger";
 import { addCooldown, getTimeLeft } from "../../utils/support";
+import { forumSupportLabels } from "../../utils/types/support";
 
 module.exports = {
     name: "helpme",
@@ -53,17 +54,18 @@ module.exports = {
             filter: (i) => i.customId === 'supportTagChooserModal' && i.user.id === user.id,
         });
 
-        collector.on('collect', async interaction => {
+        collector.on('collect', async collectorInteraction => {
             try {
-
-                const tag = supportChannel.availableTags.find(tag => tag.name === interaction.values[0]);
+                const tag = supportChannel.availableTags.find(tag => tag.name === collectorInteraction.values[0]);
                 if (!tag) return;
 
                 const supportRole = getSupportRole(Object.keys(forumSupportLabels).find(key => forumSupportLabels[key] === tag.name) as keyof typeof forumSupportLabels);
                 if (!supportRole) {
-                    await interaction.reply({ content: 'לא נמצא תפקיד תמיכה עבור הקטגוריה הנבחרת!', ephemeral: true });
+                    await collectorInteraction.reply({ content: 'לא נמצא תפקיד תמיכה עבור הקטגוריה הנבחרת!', ephemeral: true });
                     return;
                 }
+
+                await interaction.editReply({ content: `בחרת בקטגוריה ${tag.name}.\nבמידה ואת/ה רוצה לשנות את הקטגוריה או שסגרת בטעות את הטופס מילוי פרטים, יש לשלוח את הפקודה מחדש.`, components: [] });
 
                 const modal = new ModalBuilder()
                     .setCustomId('supportThreadModal')
@@ -86,46 +88,48 @@ module.exports = {
 
                 modal.addComponents(firstRow, secondRow);
 
-                await interaction.showModal(modal);
+                await collectorInteraction.showModal(modal);
 
-                interaction.awaitModalSubmit({ time: 0, filter: (i) => i.customId === 'supportThreadModal' && i.user.id === user.id })
+                collectorInteraction.awaitModalSubmit({ time: 0, filter: (i) => i.customId === 'supportThreadModal' && i.user.id === user.id })
                     .then(async modalInteraction => {
                         await modalInteraction.deferUpdate();
+                        await modalInteraction.editReply({ content: 'מעבד את הבקשה...', components: [] })
 
                         const title = modalInteraction.fields.getTextInputValue('titleInput');
                         const question = modalInteraction.fields.getTextInputValue('questionInput');
 
-                        if (!interaction.inCachedGuild()) return;
+                        if (!collectorInteraction.inCachedGuild()) return;
 
-                        const nickname = interaction.member.displayName;
-
-                        const embed = new EmbedBuilder()
-                            .setTitle("בקשת עזרה")
-                            .setDescription(`**נשאל על ידי:** ${interaction.user}\n**כותרת השאלה:** ${title}\n**השאלה:** ${question}`)
-                            .setFooter({
-                                text: `Requested by ${interaction.user.tag}`,
-                                iconURL: interaction.user.displayAvatarURL()
-                            })
-                            .setColor('Random')
-                            .setTimestamp();
+                        const nickname = collectorInteraction.member.displayName;
 
                         const post = await supportChannel.threads.create({
                             name: `${title} - ${nickname}`,
                             message: {
-                                content: `<@&${supportRole}>`,
-                                embeds: [embed],
+                                content:
+                                    `||<@&${supportRole}>||` + "\n\n" +
+                                    "**כותרת השאלה:**\n" +
+                                    `${title}\n\n` +
+                                    "**פירוט השאלה:**\n" +
+                                    `${question}\n\n\n` +
+                                    `_(נשאל על ידי ${collectorInteraction.user})_`,
+                                files: ['./src/assets/gifs/rainbow-line.gif']
                             },
                             appliedTags: [tag.id],
                         });
+
+                        await post.lastMessage?.pin();
+                        await post.lastMessage?.delete(); // deletes the "pinned a message" message
+
                         await post.members.add(user.id);
 
-                        await modalInteraction.editReply({ content: `השאלה נשלחה! ניתן לצפות בפוסט שנפתח:\n <#${post.id}>`, components: [] });
+                        await modalInteraction.editReply({ content: `השאלה נשלחה!\nניתן לצפות בפוסט שנפתח:\n\n <#${post.id}>`, components: [] });
                         addCooldown(user.id);
                     }).catch(async (err) => {
-                        await interaction.editReply({ content: 'הזמן להגשת השאלה נגמר!\nיש לנסות שוב.', components: [] });
+                        logError(err);
+                        await collectorInteraction.editReply({ content: 'התרחשה שגיאה בעיבוד הבקשה!\nיש לפנות לצוות השרת בנושא זה.', components: [] });
                     });
             } catch (err) {
-                console.log(err);
+                logError(err);
             }
         });
     }
