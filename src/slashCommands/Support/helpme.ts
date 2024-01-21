@@ -113,8 +113,7 @@ module.exports = {
                                     `${title}\n\n` +
                                     "**פירוט השאלה:**\n" +
                                     `${question}\n\n\n` +
-                                    `_(נשאל על ידי ${collectorInteraction.user})_`,
-                                files: ['./src/assets/gifs/rainbow-line.gif']
+                                    `_(נשאל על ידי ${collectorInteraction.user})_`
                             },
                             appliedTags: [tag.id],
                         });
