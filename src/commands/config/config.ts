@@ -6,7 +6,7 @@ import { logError } from '../../utils/logger';
 
 module.exports = {
     name: 'config',
-    category: 'Support',
+    category: 'Config',
     ephemeral: true,
     description: 'Configure config values',
     permissions: ['ManageGuild'],
