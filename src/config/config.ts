@@ -108,3 +108,11 @@ export function setSupportForum(channelId: string) {
     config.supportSettings.channelId = channelId;
     updateConfigFile();
 }
+
+export function getUghChannelId() {
+    return config.channels.ugh;
+}
+
+export function getServerStaffChannelId() {
+    return config.channels.staff;
+}
