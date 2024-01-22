@@ -1,20 +1,19 @@
 import { logInfo } from './utils/logger';
-logInfo("Starting bot...")
+logInfo('Starting bot...')
 
 import { Client, Collection, IntentsBitField } from 'discord.js';
+import { initDbClient } from './lib/database/mongo';
 import { loadEvents } from './handlers/eventsHandler';
-import { loadCommands } from './handlers/commandsHandler';
 import { loadSlashCommands } from './handlers/slashCommandsHandler';
-import { IBot } from './utils/interfaces/IBot';
-import { ISlashCommand } from './utils/interfaces/ISlashCommand';
-import { IEvent } from './utils/interfaces/IEvent';
-import { ICommand } from './utils/interfaces/ICommand';
-import { scheduleChannelLock } from './utils/timeSchedulers';
+import { Bot } from './lib/types/discord/bot';
+import { SlashCommand } from './lib/types/discord/slashCommand';
+import { Event } from './lib/types/discord/event';
+import { scheduleChannelLock } from './lib/schedulers';
 import { loadButtons } from './handlers/buttonsHandler';
-import { IButton } from './utils/interfaces/IButton';
-import { IModal } from './utils/interfaces/IModal';
+import { Button } from './lib/types/discord/button';
+import { Modal } from './lib/types/discord/modal';
 import { loadModals } from './handlers/modalsHandler';
-import { getBotToken } from './utils/config';
+import { getBotToken } from './config/config';
 
 const myTestServerId = '851789251754328064';
 const FRCIsraelId = '959144521621458974'
@@ -31,15 +30,13 @@ const client = new Client({
     ]
 });
 
-const commands = new Collection<string, ICommand>();
-const events = new Collection<string, IEvent>();
-const slashCommands = new Collection<string, ISlashCommand>();
-const buttons = new Collection<string, IButton>();
-const modals = new Collection<string, IModal>();
+const events = new Collection<string, Event>();
+const slashCommands = new Collection<string, SlashCommand>();
+const buttons = new Collection<string, Button>();
+const modals = new Collection<string, Modal>();
 
-const bot: IBot = {
+const bot: Bot = {
     client,
-    commands,
     events,
     slashCommands,
     buttons,
@@ -49,8 +46,8 @@ const bot: IBot = {
     prefix: '!'
 };
 
+initDbClient();
 loadEvents(bot, false);
-loadCommands(bot, false);
 loadSlashCommands(bot, false);
 loadButtons(bot, false);
 loadModals(bot, false);
