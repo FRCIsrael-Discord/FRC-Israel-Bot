@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, CommandInteraction, GuildMember } from 'discord.js';
 import { isTeamRoleExists, setFTCTeamRoleId, setNoTeamRoleId, setTeamRoles } from '../../config/config';
-import { Bot, SlashCommand } from '../../lib/interfaces/discord';
+import { Bot, SlashCommand } from '../../lib/types/discord';
 import { frcTeamList } from '../../utils/teamLists';
 
 module.exports = {

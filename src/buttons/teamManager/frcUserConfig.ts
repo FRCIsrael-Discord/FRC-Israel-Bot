@@ -1,5 +1,5 @@
 import { ButtonInteraction, TextInputStyle } from 'discord.js';
-import { Bot, Button } from '../../lib/interfaces/discord';
+import { Bot, Button } from '../../lib/types/discord';
 import { ActionRowBuilder, ModalActionRowComponentBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
 
 module.exports = {

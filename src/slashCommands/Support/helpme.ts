@@ -1,8 +1,8 @@
 import crypto from 'crypto';
 import { ActionRowBuilder, ChannelType, CommandInteraction, ComponentType, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, ModalBuilder, StringSelectMenuBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { getSupportForum, getSupportRole } from '../../config/config';
-import { Bot, SlashCommand } from '../../lib/interfaces/discord';
-import { forumSupportLabels } from '../../lib/interfaces/support';
+import { Bot, SlashCommand } from '../../lib/types/discord';
+import { forumSupportLabels } from '../../lib/types/support';
 import { addCooldown, getTimeLeft } from '../../lib/support/cooldowns';
 import { logError } from '../../utils/logger';
 

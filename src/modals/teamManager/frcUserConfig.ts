@@ -1,6 +1,6 @@
 import { GuildMember, ModalSubmitInteraction, Role } from 'discord.js';
 import { getTeamRoles } from '../../config/config';
-import { Bot, Modal } from '../../lib/interfaces/discord';
+import { Bot, Modal } from '../../lib/types/discord';
 import { addNoTeamRole, hasNoTeamRole, renameMember, setFRCRole } from '../../lib/userConfig/user-config';
 import { frcTeamList } from '../../utils/teamLists';
 

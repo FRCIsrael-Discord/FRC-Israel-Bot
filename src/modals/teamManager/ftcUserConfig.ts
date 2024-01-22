@@ -1,5 +1,5 @@
 import { GuildMember, ModalSubmitInteraction } from 'discord.js';
-import { Bot, Modal } from '../../lib/interfaces/discord';
+import { Bot, Modal } from '../../lib/types/discord';
 import { addNoTeamRole, hasNoTeamRole, renameMember, setFTCRole } from '../../lib/userConfig/user-config';
 import { ftcTeamList } from '../../utils/teamLists';
 

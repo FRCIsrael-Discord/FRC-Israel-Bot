@@ -5,13 +5,13 @@ import { Client, Collection, IntentsBitField } from 'discord.js';
 import { initDbClient } from './lib/database/mongo';
 import { loadEvents } from './handlers/eventsHandler';
 import { loadSlashCommands } from './handlers/slashCommandsHandler';
-import { Bot } from './lib/interfaces/discord/bot';
-import { SlashCommand } from './lib/interfaces/discord/slashCommand';
-import { Event } from './lib/interfaces/discord/event';
+import { Bot } from './lib/types/discord/bot';
+import { SlashCommand } from './lib/types/discord/slashCommand';
+import { Event } from './lib/types/discord/event';
 import { scheduleChannelLock } from './lib/schedulers';
 import { loadButtons } from './handlers/buttonsHandler';
-import { Button } from './lib/interfaces/discord/button';
-import { Modal } from './lib/interfaces/discord/modal';
+import { Button } from './lib/types/discord/button';
+import { Modal } from './lib/types/discord/modal';
 import { loadModals } from './handlers/modalsHandler';
 import { getBotToken } from './config/config';
 

@@ -1,5 +1,5 @@
 import path from 'path';
-import { Bot, Event } from '../lib/interfaces/discord';
+import { Bot, Event } from '../lib/types/discord';
 import { getFiles } from '../utils/filesReader';
 import { logInfo } from '../utils/logger';
 

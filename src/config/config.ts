@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { logWarn } from '../utils/logger';
-import { SupportType } from '../lib/interfaces/support'
+import { SupportType } from '../lib/types/support'
 
 interface ConfigObject {
     'token': string;

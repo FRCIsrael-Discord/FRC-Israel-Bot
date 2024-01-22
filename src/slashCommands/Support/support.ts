@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ChannelType, CommandInteraction } from 'discord.js';
 import { setSupportCooldown, setSupportForum, setSupportRole } from '../../config/config';
-import { Bot, SlashCommand } from '../../lib/interfaces/discord';
-import { SupportType, forumSupportLabels } from '../../lib/interfaces/support';
+import { Bot, SlashCommand } from '../../lib/types/discord';
+import { SupportType, forumSupportLabels } from '../../lib/types/support';
 import { logError } from '../../utils/logger';
 
 module.exports = {

@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import path from "path";
-import { Bot, SlashCommand } from "../lib/interfaces/discord";
+import { Bot, SlashCommand } from "../lib/types/discord";
 import { getFiles } from "../utils/filesReader";
 import { logInfo } from "../utils/logger";
 

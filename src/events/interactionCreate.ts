@@ -1,5 +1,5 @@
 import { CacheType, Events, GuildMember, Interaction, TextChannel } from 'discord.js';
-import { Bot, Event, SlashCommand } from '../lib/interfaces/discord';
+import { Bot, Event, SlashCommand } from '../lib/types/discord';
 import { logError } from '../utils/logger';
 
 module.exports = {

@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import path from 'path';
-import { Bot, Modal } from '../lib/interfaces/discord';
+import { Bot, Modal } from '../lib/types/discord';
 import { getFiles } from '../utils/filesReader';
 import { logInfo } from '../utils/logger';
 

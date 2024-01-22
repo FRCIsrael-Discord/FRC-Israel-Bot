@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder } from '@discordjs/builders';
 import { ApplicationCommandOptionType, ButtonStyle, CommandInteraction, TextChannel } from 'discord.js';
-import { Bot, SlashCommand } from '../../lib/interfaces/discord';
+import { Bot, SlashCommand } from '../../lib/types/discord';
 
 module.exports = {
     name: 'userconfig',

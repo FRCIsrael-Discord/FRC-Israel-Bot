@@ -1,5 +1,5 @@
 import { ApplicationCommand, ApplicationCommandOptionType, CommandInteraction } from 'discord.js';
-import { Bot, SlashCommand } from '../../lib/interfaces/discord';
+import { Bot, SlashCommand } from '../../lib/types/discord';
 import { logError } from '../../utils/logger';
 
 module.exports = {
