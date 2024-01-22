@@ -1,5 +1,5 @@
-import { Collection, CommandInteraction, Guild, GuildMember, Interaction, Role } from "discord.js";
-import { getFTCTeamRoleId, getNoTeamRoleId } from "./config";
+import { Collection, CommandInteraction, Guild, GuildMember, Interaction, Role } from 'discord.js';
+import { getFTCTeamRoleId, getNoTeamRoleId } from '../../config/config';
 
 export async function renameMember(member: GuildMember, guild: Guild, nickname: string, teamNumber: string) {
     const newNick = `${nickname} | ${teamNumber}`;
@@ -15,7 +15,7 @@ export async function renameMember(member: GuildMember, guild: Guild, nickname: 
 export async function setFRCRole(guildRoles: Collection<string, Role>, member: GuildMember, teamNumber: string, guild: Guild) {
     await removeNoTeamRole(member, guild);
 
-    const newRole = guildRoles.find(role => role.name.split(" | ")[1] === teamNumber);
+    const newRole = guildRoles.find(role => role.name.split(' | ')[1] === teamNumber);
     if (newRole != undefined) {
         await member.roles.add(newRole);
         return true;

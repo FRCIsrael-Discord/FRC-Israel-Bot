@@ -1,31 +1,30 @@
-import { ActionRowBuilder, ChannelType, CommandInteraction, ComponentType, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, ModalBuilder, StringSelectMenuBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
-import { getSupportForum, getSupportRole } from "../../utils/config";
-import { IBot } from "../../utils/interfaces/IBot";
-import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { logError } from "../../utils/logger";
-import { addCooldown, getTimeLeft } from "../../utils/support";
-import { forumSupportLabels } from "../../utils/types/support";
 import crypto from 'crypto';
+import { ActionRowBuilder, ChannelType, CommandInteraction, ComponentType, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, ModalBuilder, StringSelectMenuBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { getSupportForum, getSupportRole } from '../../config/config';
+import { Bot, SlashCommand } from '../../lib/interfaces/discord';
+import { forumSupportLabels } from '../../lib/interfaces/support';
+import { addCooldown, getTimeLeft } from '../../lib/support/cooldowns';
+import { logError } from '../../utils/logger';
 
 module.exports = {
-    name: "helpme",
-    category: "Support",
-    description: "Create a support thread",
+    name: 'helpme',
+    category: 'Support',
+    description: 'Create a support thread',
     botPermissions: ['SendMessages'],
     permissions: ['SendMessages'],
     ephemeral: true,
 
-    execute: async (bot: IBot, interaction: CommandInteraction) => {
+    execute: async (bot: Bot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         const { user } = interaction;
 
         const supportChannelId = getSupportForum();
         if (!supportChannelId) {
-            return await interaction.editReply("לא הוגדר צ'אנל פורום!\nיש לפנות לצוות השרת בנושא זה.");
+            return await interaction.editReply(`לא הוגדר צ'אנל פורום!\nיש לפנות לצוות השרת בנושא זה.`);
         }
         const supportChannel = interaction.guild!.channels.cache.get(supportChannelId)!;
         if (supportChannel.type !== ChannelType.GuildForum) {
-            return await interaction.editReply("ניתן לבקש עזרה רק בצ'אנל מסוג פורום!")
+            return await interaction.editReply(`ניתן לבקש עזרה רק בצ'אנל מסוג פורום!`)
         }
 
         const cooldown = getTimeLeft(user.id);
@@ -108,10 +107,10 @@ module.exports = {
                             name: `${title} - ${nickname}`,
                             message: {
                                 content:
-                                    `||<@&${supportRole}>||` + "\n\n" +
-                                    "**כותרת השאלה:**\n" +
+                                    `||<@&${supportRole}>||` + '\n\n' +
+                                    '**כותרת השאלה:**\n' +
                                     `${title}\n\n` +
-                                    "**פירוט השאלה:**\n" +
+                                    '**פירוט השאלה:**\n' +
                                     `${question}\n\n\n` +
                                     `_(נשאל על ידי ${collectorInteraction.user})_`
                             },
@@ -119,7 +118,7 @@ module.exports = {
                         });
 
                         await post.lastMessage?.pin();
-                        await post.lastMessage?.delete(); // deletes the "pinned a message" message
+                        await post.lastMessage?.delete(); // deletes the 'pinned a message' message
 
                         await post.members.add(user.id);
 
@@ -134,4 +133,4 @@ module.exports = {
             }
         });
     }
-} as ISlashCommand;
+} as SlashCommand;

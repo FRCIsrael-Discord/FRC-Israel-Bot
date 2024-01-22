@@ -1,29 +1,27 @@
-import { CacheType, Client, Events, Guild, GuildMember, Interaction, TextChannel } from "discord.js"
-import { IBot } from "../utils/interfaces/IBot"
-import { IEvent } from "../utils/interfaces/IEvent"
-import { ISlashCommand } from "../utils/interfaces/ISlashCommand";
-import { logError } from "../utils/logger";
+import { CacheType, Events, GuildMember, Interaction, TextChannel } from 'discord.js';
+import { Bot, Event, SlashCommand } from '../lib/interfaces/discord';
+import { logError } from '../utils/logger';
 
 module.exports = {
     name: Events.InteractionCreate,
     once: false,
-    execute: async (bot: IBot, interaction: Interaction<CacheType>, ...args: any) => {
+    execute: async (bot: Bot, interaction: Interaction<CacheType>, ...args: any) => {
         const { slashCommands, buttons, modals, owners, client } = bot;
         const { guild } = interaction;
         const channel = interaction.channel as TextChannel;
         if (interaction.isCommand()) {
             const member = interaction.member as GuildMember;
-            if (!interaction.inGuild()) return interaction.reply("This command can only be used in a server!");
+            if (!interaction.inGuild()) return interaction.reply('This command can only be used in a server!');
 
-            const slashCommand: ISlashCommand | undefined = slashCommands.get(interaction.commandName);
-            if (!slashCommand) return await interaction.editReply("This command does not exist!");
+            const slashCommand: SlashCommand | undefined = slashCommands.get(interaction.commandName);
+            if (!slashCommand) return await interaction.editReply('This command does not exist!');
 
             await interaction.deferReply({ ephemeral: slashCommand.ephemeral || false }).catch((err: Error) => {
                 logError(err.message);
             });
 
             if (slashCommand.devOnly && !owners.includes(member.id)) {
-                return await interaction.editReply("This command is only for developers!");
+                return await interaction.editReply('This command is only for developers!');
             }
 
             if (slashCommand.permissions && !channel.permissionsFor(member).has(slashCommand.permissions)) {
@@ -48,8 +46,8 @@ module.exports = {
             }
 
             if (!button) {
-                if (interaction.deferred) return await interaction.editReply("This button does not exist!");
-                return await interaction.reply("This button does not exist!");
+                if (interaction.deferred) return await interaction.editReply('This button does not exist!');
+                return await interaction.reply('This button does not exist!');
             }
 
             await button.execute(bot, interaction).catch((err: Error) => {
@@ -70,4 +68,4 @@ module.exports = {
             });
         }
     }
-} as IEvent
+} as Event

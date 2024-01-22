@@ -1,14 +1,12 @@
-import { Client, Collection } from "discord.js";
-import path from "path";
-import { getFiles } from "../utils/filesReader";
-import { IBot } from "../utils/interfaces/IBot";
-import { IEvent } from "../utils/interfaces/IEvent";
-import { logInfo } from "../utils/logger";
+import path from 'path';
+import { Bot, Event } from '../lib/interfaces/discord';
+import { getFiles } from '../utils/filesReader';
+import { logInfo } from '../utils/logger';
 
-export function loadEvents(bot: IBot, reload: boolean) {
+export function loadEvents(bot: Bot, reload: boolean) {
     const { client } = bot;
 
-    const eventsPath = path.join(__dirname, "../events");
+    const eventsPath = path.join(__dirname, '../events');
     let eventsFiles = getFiles(eventsPath, '.ts');
     if (eventsFiles.length === 0) {
         logInfo('No events found');
@@ -19,7 +17,7 @@ export function loadEvents(bot: IBot, reload: boolean) {
             delete require.cache[require.resolve(`../events/${fileName}`)];
         }
 
-        const event: IEvent = require(`../events/${fileName}`)
+        const event: Event = require(`../events/${fileName}`)
         if (event.once) {
             client.once(event.name, (...args) => event.execute(bot, ...args));
         } else {

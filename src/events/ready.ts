@@ -1,12 +1,11 @@
-import { Client, Events } from "discord.js"
-import { IBot } from "../utils/interfaces/IBot"
-import { IEvent } from "../utils/interfaces/IEvent"
-import { logInfo } from "../utils/logger";
+import { Events } from 'discord.js';
+import { Bot, Event } from '../lib/interfaces/discord';
+import { logInfo } from '../utils/logger';
 
 module.exports = {
     name: Events.ClientReady,
     once: true,
-    execute: async (bot: IBot, ...args: any) => {
+    execute: async (bot: Bot, ...args: any) => {
         const { client, testServers, slashCommands } = bot;
         testServers.forEach(async serverId => {
             const guild = client.guilds.cache.get(serverId);
@@ -16,6 +15,6 @@ module.exports = {
 
             await guild.commands.set([...slashCommands.values()]);
         });
-        logInfo("FRC Israel bot is now active!");
+        logInfo('FRC Israel bot is now active!');
     }
-} as IEvent
+} as Event

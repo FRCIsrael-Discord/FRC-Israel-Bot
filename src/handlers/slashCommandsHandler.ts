@@ -1,11 +1,10 @@
-import path from "path";
-import { getFiles } from "../utils/filesReader";
-import { IBot } from "../utils/interfaces/IBot";
-import { ISlashCommand } from "../utils/interfaces/ISlashCommand";
 import * as fs from "fs";
+import path from "path";
+import { Bot, SlashCommand } from "../lib/interfaces/discord";
+import { getFiles } from "../utils/filesReader";
 import { logInfo } from "../utils/logger";
 
-export function loadSlashCommands(bot: IBot, reload: boolean) {
+export function loadSlashCommands(bot: Bot, reload: boolean) {
     const { slashCommands } = bot;
 
     const commandsPath = path.join(__dirname, "../slashCommands");
@@ -16,7 +15,7 @@ export function loadSlashCommands(bot: IBot, reload: boolean) {
         slashCommandsFiles.forEach((f) => {
             if (reload)
                 delete require.cache[require.resolve(`../slashCommands/${category}/${f}`)]
-            const command: ISlashCommand = require(`../slashCommands/${category}/${f}`)
+            const command: SlashCommand = require(`../slashCommands/${category}/${f}`)
             slashCommands.set(command.name, command)
         })
     })

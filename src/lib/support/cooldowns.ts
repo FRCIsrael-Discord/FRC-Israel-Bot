@@ -1,4 +1,4 @@
-import { getSupportCooldown } from "./config";
+import { getSupportCooldown } from '../../config/config';
 
 const cooldownTimers: {
     userId: string;

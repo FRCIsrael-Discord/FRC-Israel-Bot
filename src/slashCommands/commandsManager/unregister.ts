@@ -1,25 +1,24 @@
-import { ApplicationCommand, ApplicationCommandOptionType, CommandInteraction } from "discord.js"
-import { IBot } from "../../utils/interfaces/IBot";
-import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { logError } from "../../utils/logger";
+import { ApplicationCommand, ApplicationCommandOptionType, CommandInteraction } from 'discord.js';
+import { Bot, SlashCommand } from '../../lib/interfaces/discord';
+import { logError } from '../../utils/logger';
 
 module.exports = {
-    name: "unregister",
-    category: "Commands Manager",
+    name: 'unregister',
+    category: 'Commands Manager',
     devOnly: true,
     ephemeral: true,
-    description: "Unregister a command",
-    permissions: ["Administrator"],
+    description: 'Unregister a command',
+    permissions: ['Administrator'],
     botPermissions: ['SendMessages'],
     options: [
         {
             name: 'command',
-            description: "The command name to unregister",
+            description: 'The command name to unregister',
             type: ApplicationCommandOptionType.String,
             required: true,
         }
     ],
-    execute: async (bot: IBot, interaction: CommandInteraction) => {
+    execute: async (bot: Bot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         const { options } = interaction;
         const { slashCommands } = bot;
@@ -27,7 +26,7 @@ module.exports = {
 
         try {
             if (!slashCommands.has(command)) {
-                return interaction.editReply({ content: "This command does not exist!" });
+                return interaction.editReply({ content: 'This command does not exist!' });
             } else {
                 const cmd = slashCommands.get(command)!;
                 const guild = interaction.guild;
@@ -40,10 +39,10 @@ module.exports = {
         } catch (e) {
             logError(e);
             try {
-                return interaction.editReply({ content: "An error occurred while trying to unregister the command." });
+                return interaction.editReply({ content: 'An error occurred while trying to unregister the command.' });
             } catch (e) {
-                return interaction.editReply("An error occurred while trying to unregister the command.");
+                return interaction.editReply('An error occurred while trying to unregister the command.');
             }
         }
     }
-} as ISlashCommand;
+} as SlashCommand;

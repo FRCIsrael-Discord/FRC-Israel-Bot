@@ -1,5 +1,5 @@
 import { Db, MongoClient } from 'mongodb';
-import { getMongoURI } from '../../utils/config';
+import { getMongoURI } from '../../config/config';
 import { logError, logInfo } from '../../utils/logger';
 
 const connectionString = getMongoURI() || 'mongodb://127.0.0.1:27017';

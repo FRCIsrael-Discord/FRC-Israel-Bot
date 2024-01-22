@@ -1,24 +1,23 @@
-import { ButtonInteraction, TextInputStyle } from "discord.js";
-import { IBot } from "../../utils/interfaces/IBot";
-import { ActionRowBuilder, ModalActionRowComponentBuilder, ModalBuilder, TextInputBuilder } from "@discordjs/builders";
-import { IButton } from "../../utils/interfaces/IButton";
+import { ButtonInteraction, TextInputStyle } from 'discord.js';
+import { Bot, Button } from '../../lib/interfaces/discord';
+import { ActionRowBuilder, ModalActionRowComponentBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
 
 module.exports = {
-    id: 'configFRCUserButton',
+    id: 'configFTCUserButton',
     catergory: 'Team Manager',
     deferReply: false,
 
-    execute: async (bot: IBot, interaction: ButtonInteraction) => {
+    execute: async (bot: Bot, interaction: ButtonInteraction) => {
         const modal = new ModalBuilder()
-            .setCustomId('configFRCUserModal')
-            .setTitle('הגדרות משתמש (FRC)')
+            .setCustomId('configFTCUserModal')
+            .setTitle('הגדרות משתמש (FTC)')
 
         const nicknameInput = new TextInputBuilder()
             .setCustomId('nicknameInput')
             .setLabel('Nickname')
             .setRequired(true)
             .setStyle(TextInputStyle.Short)
-        
+
         const teamInput = new TextInputBuilder()
             .setCustomId('teamInput')
             .setLabel('Team Number')
@@ -32,4 +31,4 @@ module.exports = {
 
         await interaction.showModal(modal)
     }
-} as IButton
+} as Button

@@ -1,7 +1,6 @@
 import { ApplicationCommandOptionType, CommandInteraction, GuildMember } from 'discord.js';
-import { IBot } from '../../utils/interfaces/IBot';
-import { ISlashCommand } from '../../utils/interfaces/ISlashCommand';
-import { setTeamRoles, getNoTeamRoleId, getTeamRoles, isTeamRoleExists, setFTCTeamRoleId, setNoTeamRoleId } from '../../utils/config';
+import { isTeamRoleExists, setFTCTeamRoleId, setNoTeamRoleId, setTeamRoles } from '../../config/config';
+import { Bot, SlashCommand } from '../../lib/interfaces/discord';
 import { frcTeamList } from '../../utils/teamLists';
 
 module.exports = {
@@ -23,7 +22,7 @@ module.exports = {
                     name: 'role',
                     type: ApplicationCommandOptionType.Role,
                     required: true,
-                    description: "The role to set as no team role"
+                    description: 'The role to set as no team role'
                 }
             ],
         },
@@ -41,14 +40,14 @@ module.exports = {
                     name: 'role',
                     type: ApplicationCommandOptionType.Role,
                     required: true,
-                    description: "The role to set as ftc team role"
+                    description: 'The role to set as ftc team role'
                 }
             ],
         }
 
     ],
 
-    execute: async (bot: IBot, interaction: CommandInteraction) => {
+    execute: async (bot: Bot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         const { options, guild } = interaction;
         const member: GuildMember = interaction.member as GuildMember
@@ -66,7 +65,7 @@ module.exports = {
             let amount = 0;
             const teamRoles: string[] = [];
             guildRoles.forEach(role => {
-                if (frcTeamList.includes(role.name.split(" | ")[1]) && !isTeamRoleExists(role.id)) {
+                if (frcTeamList.includes(role.name.split(' | ')[1]) && !isTeamRoleExists(role.id)) {
                     amount++;
                     teamRoles.push(role.id);
                 }
@@ -75,4 +74,4 @@ module.exports = {
             await interaction.editReply({ content: `Added ${amount} new team roles.` });
         }
     }
-} as ISlashCommand;
+} as SlashCommand;

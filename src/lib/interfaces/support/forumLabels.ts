@@ -1,4 +1,3 @@
-export const supportTypes = ['programming', 'media', 'modeling', 'mechanics', 'electronics', 'strategy', 'community', 'pr'] as const;
 export const forumSupportLabels = {
     programming: 'תכנות',
     media: 'מדיה',
@@ -9,4 +8,3 @@ export const forumSupportLabels = {
     community: 'קהילה',
     pr: 'יחסי ציבור'
 } as const;
-export type SupportType = typeof supportTypes[number];

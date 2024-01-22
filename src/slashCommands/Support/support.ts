@@ -1,33 +1,32 @@
-import { ApplicationCommandOptionType, ChannelType, CommandInteraction } from "discord.js"
-import { IBot } from "../../utils/interfaces/IBot";
-import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { logError } from "../../utils/logger";
-import { SupportType, forumSupportLabels } from "../../utils/types/support";
-import { setSupportCooldown, setSupportForum, setSupportRole } from "../../utils/config";
+import { ApplicationCommandOptionType, ChannelType, CommandInteraction } from 'discord.js';
+import { setSupportCooldown, setSupportForum, setSupportRole } from '../../config/config';
+import { Bot, SlashCommand } from '../../lib/interfaces/discord';
+import { SupportType, forumSupportLabels } from '../../lib/interfaces/support';
+import { logError } from '../../utils/logger';
 
 module.exports = {
-    name: "support",
-    category: "Support",
+    name: 'support',
+    category: 'Support',
     ephemeral: true,
-    description: "Configure support settings",
+    description: 'Configure support settings',
     permissions: ['ManageGuild'],
     botPermissions: ['SendMessages'],
     options: [
         {
             name: 'roles',
-            description: "Configure support roles",
+            description: 'Configure support roles',
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
                     name: 'type',
-                    description: "The support type to set",
+                    description: 'The support type to set',
                     type: ApplicationCommandOptionType.String,
                     required: true,
                     choices: Object.keys(forumSupportLabels).map(key => ({ name: forumSupportLabels[key as SupportType], value: key }))
                 },
                 {
                     name: 'role',
-                    description: "The support role to set",
+                    description: 'The support role to set',
                     required: true,
                     type: ApplicationCommandOptionType.Role,
                 }
@@ -35,12 +34,12 @@ module.exports = {
         },
         {
             name: 'channel',
-            description: "Configure support channel",
+            description: 'Configure support channel',
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
                     name: 'channel',
-                    description: "The support channel to set",
+                    description: 'The support channel to set',
                     type: ApplicationCommandOptionType.Channel,
                     required: true,
                     channelTypes: [ChannelType.GuildForum]
@@ -49,12 +48,12 @@ module.exports = {
         },
         {
             name: 'cooldown',
-            description: "Configure support cooldown",
+            description: 'Configure support cooldown',
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
                     name: 'cooldown',
-                    description: "The support cooldown to set (in seconds)",
+                    description: 'The support cooldown to set (in seconds)',
                     type: ApplicationCommandOptionType.Integer,
                     required: true,
                     minValue: 0,
@@ -62,7 +61,7 @@ module.exports = {
             ]
         }
     ],
-    execute: async (bot: IBot, interaction: CommandInteraction) => {
+    execute: async (bot: Bot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         const { options } = interaction;
 
@@ -74,7 +73,7 @@ module.exports = {
                 await interaction.editReply({ content: `Support channel has been updated!\nChannel: <#${channel.id}>` });
             } catch (err) {
                 logError(err);
-                return await interaction.editReply({ content: "An error occurred while updating support settings!" });
+                return await interaction.editReply({ content: 'An error occurred while updating support settings!' });
             }
         } else if (options.getSubcommand() === 'roles') {
             const type = options.getString('type', true) as SupportType;
@@ -85,7 +84,7 @@ module.exports = {
                 await interaction.editReply({ content: `Support settings for ${type} have been updated!\nRole: ${role}` });
             } catch (err) {
                 logError(err);
-                return await interaction.editReply({ content: "An error occurred while updating support settings!" });
+                return await interaction.editReply({ content: 'An error occurred while updating support settings!' });
             }
 
             await interaction.editReply({ content: `Support role for ${type} have been updated!\nRole: ${role}` });
@@ -97,8 +96,8 @@ module.exports = {
                 await interaction.editReply({ content: `Support cooldown has been updated!\nCooldown: ${cooldown}` });
             } catch (err) {
                 logError(err);
-                return await interaction.editReply({ content: "An error occurred while updating support settings!" });
+                return await interaction.editReply({ content: 'An error occurred while updating support settings!' });
             }
         }
     }
-} as ISlashCommand;
+} as SlashCommand;
