@@ -5,7 +5,8 @@ import { SupportType } from '../lib/types/support'
 interface ConfigObject {
     'token': string;
     'mongoURI': string;
-    'roles': RolesObject;
+    'roles': Roles;
+    'channels': Channels;
     'supportSettings': {
         'channelId': string,
         'cooldown': number,
@@ -15,11 +16,16 @@ interface ConfigObject {
     };
 }
 
-interface RolesObject {
-    'teams': string[];
-    'noTeam': string;
-    'ftc': string;
+interface Roles {
+    teams: string[];
+    noTeam: string;
+    ftc: string;
 };
+
+interface Channels {
+    ugh: string;
+    staff: string;
+}
 
 
 const filePath = 'config.json';

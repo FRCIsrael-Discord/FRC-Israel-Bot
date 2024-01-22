@@ -6,6 +6,10 @@
         "noTeam": "",
         "ftc": ""
     },
+    "channels": {
+        "ugh": "",
+        "staff": ""
+    },
     "supportSettings": {
         "channelId": "",
         "cooldown": 0,
