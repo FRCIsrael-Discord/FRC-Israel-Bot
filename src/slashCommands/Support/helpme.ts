@@ -103,7 +103,7 @@ module.exports = {
                         if (!collectorInteraction.inCachedGuild()) return;
 
                         const nickname = collectorInteraction.member.displayName;
-
+                  
                         const post = await supportChannel.threads.create({
                             name: `${title} - ${nickname}`,
                             message: {
