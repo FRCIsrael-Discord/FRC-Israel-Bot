@@ -5,6 +5,7 @@ import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 import { logError } from "../../utils/logger";
 import { addCooldown, getTimeLeft } from "../../utils/support";
 import { forumSupportLabels } from "../../utils/types/support";
+import crypto from 'crypto';
 
 module.exports = {
     name: "helpme",
@@ -34,9 +35,10 @@ module.exports = {
             return await interaction.editReply(`את/ה יכול/ה לפנות לעזרה שוב בעוד ${minutes}:${seconds.padStart(2, '0')} דקות!`);
         }
 
+        const customId = crypto.randomBytes(10).toString('hex');
 
         const tagChooserModel = new StringSelectMenuBuilder()
-            .setCustomId('supportTagChooserModal')
+            .setCustomId(customId)
             .setPlaceholder('בחר/י קטגוריה')
             .addOptions(supportChannel.availableTags.map(tag => (
                 {
@@ -51,23 +53,24 @@ module.exports = {
 
         const collector = reply.createMessageComponentCollector({
             componentType: ComponentType.StringSelect,
-            filter: (i) => i.customId === 'supportTagChooserModal' && i.user.id === user.id,
+            filter: (i) => i.customId === customId && i.user.id === user.id,
         });
 
-        collector.on('collect', async interaction => {
+        collector.on('collect', async collectorInteraction => {
             try {
-
-                const tag = supportChannel.availableTags.find(tag => tag.name === interaction.values[0]);
+                const tag = supportChannel.availableTags.find(tag => tag.name === collectorInteraction.values[0]);
                 if (!tag) return;
 
                 const supportRole = getSupportRole(Object.keys(forumSupportLabels).find(key => forumSupportLabels[key] === tag.name) as keyof typeof forumSupportLabels);
                 if (!supportRole) {
-                    await interaction.reply({ content: 'לא נמצא תפקיד תמיכה עבור הקטגוריה הנבחרת!', ephemeral: true });
+                    await collectorInteraction.reply({ content: 'לא נמצא תפקיד תמיכה עבור הקטגוריה הנבחרת!', ephemeral: true });
                     return;
                 }
 
+                const customModalId = crypto.randomBytes(10).toString('hex');
+
                 const modal = new ModalBuilder()
-                    .setCustomId('supportThreadModal')
+                    .setCustomId(customModalId)
                     .setTitle(`בקשת עזרה בנושא ${tag.name}`)
 
                 const titleInput = new TextInputBuilder()
@@ -87,9 +90,9 @@ module.exports = {
 
                 modal.addComponents(firstRow, secondRow);
 
-                await interaction.showModal(modal);
+                await collectorInteraction.showModal(modal);
 
-                interaction.awaitModalSubmit({ time: 0, filter: (i) => i.customId === 'supportThreadModal' && i.user.id === user.id })
+                collectorInteraction.awaitModalSubmit({ time: 0, filter: (i) => i.customId === customModalId && i.user.id === user.id })
                     .then(async modalInteraction => {
                         await modalInteraction.deferUpdate();
                         await modalInteraction.editReply({ content: 'מעבד את הבקשה...', components: [] })
@@ -97,10 +100,10 @@ module.exports = {
                         const title = modalInteraction.fields.getTextInputValue('titleInput');
                         const question = modalInteraction.fields.getTextInputValue('questionInput');
 
-                        if (!interaction.inCachedGuild()) return;
+                        if (!collectorInteraction.inCachedGuild()) return;
 
-                        const nickname = interaction.member.displayName;
-
+                        const nickname = collectorInteraction.member.displayName;
+                  
                         const post = await supportChannel.threads.create({
                             name: `${title} - ${nickname}`,
                             message: {
@@ -110,8 +113,7 @@ module.exports = {
                                     `${title}\n\n` +
                                     "**פירוט השאלה:**\n" +
                                     `${question}\n\n\n` +
-                                    `_(נשאל על ידי ${interaction.user})_`,
-                                files: ['./src/assets/gifs/rainbow-line.gif']
+                                    `_(נשאל על ידי ${collectorInteraction.user})_`
                             },
                             appliedTags: [tag.id],
                         });
@@ -125,7 +127,7 @@ module.exports = {
                         addCooldown(user.id);
                     }).catch(async (err) => {
                         logError(err);
-                        await interaction.editReply({ content: 'התרחשה שגיאה בעיבוד הבקשה!\nיש לפנות לצוות השרת בנושא זה.', components: [] });
+                        await collectorInteraction.editReply({ content: 'התרחשה שגיאה בעיבוד הבקשה!\nיש לפנות לצוות השרת בנושא זה.', components: [] });
                     });
             } catch (err) {
                 logError(err);
