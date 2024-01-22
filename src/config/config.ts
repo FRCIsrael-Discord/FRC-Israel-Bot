@@ -116,3 +116,13 @@ export function getUghChannelId() {
 export function getServerStaffChannelId() {
     return config.channels.staff;
 }
+
+export function setUghChannelId(channelId: string) {
+    config.channels.ugh = channelId;
+    updateConfigFile();
+}
+
+export function setServerStaffChannelId(channelId: string) {
+    config.channels.staff = channelId;
+    updateConfigFile();
+}
