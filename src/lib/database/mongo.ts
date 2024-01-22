@@ -5,7 +5,7 @@ import { logError, logInfo } from '../../utils/logger';
 const connectionString = getMongoURI() || 'mongodb://127.0.0.1:27017';
 let db: Db | undefined;
 
-export const initDbClient = async () => {
+export async function initDbClient() {
     const client = new MongoClient(connectionString);
 
     try {
@@ -17,4 +17,9 @@ export const initDbClient = async () => {
     logInfo('Connected to MongoDB!');
 };
 
-export default db;
+export function getDb() {
+    if (!db) {
+        throw new Error('Database not initialized!');
+    }
+    return db;
+}
