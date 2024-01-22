@@ -1,8 +1,9 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, EmbedBuilder, TextChannel } from "discord.js";
 import { Bot, SlashCommand } from "../../lib/types/discord";
-import { getSupportForum } from "../../config/config";
+import { getServerStaffChannelId, getSupportForum, getSupportRole } from "../../config/config";
 import { getPost } from "../../lib/database/support/posts";
 import { approvePost } from "../../lib/support/posts";
+import { forumSupportLabels } from "../../lib/types/support";
 
 module.exports = {
     name: 'approve',
@@ -13,7 +14,7 @@ module.exports = {
 
     execute: async (bot: Bot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
-        const { channel } = interaction;
+        const { guild, channel } = interaction;
 
         const supportChannelId = getSupportForum();
         if (!supportChannelId) {
@@ -25,14 +26,34 @@ module.exports = {
 
         const post = await getPost(channel.id);
         if (!post) {
-            return await interaction.editReply({ content: 'This thread doesn\'t exists in the database!\nProbably an old thread before the ping update.\nPlease contact the server owner.' });
+            return await interaction.editReply({ content: 'This thread doesn\'t exists in the database!\n\nProbably an old thread before the ping update.\nPlease contact the server owner.' });
         }
         if (post.approved) {
             return await interaction.editReply({ content: 'This thread is already approved!' });
         }
 
+        const supportRole = getSupportRole(post.type);
+        if (!supportRole) {
+            return await interaction.editReply({ content: 'Support role is not configured!' });
+        }
+
+        const firstMessage = await channel.fetchStarterMessage();
+        firstMessage!.reply({ content: `<@&${supportRole}>\nשאלה זאת אושרה על ידי הצוות!` });
+
         await approvePost(post);
         await interaction.editReply({ content: 'Approved!' });
+
+        const staffChannelId = getServerStaffChannelId();
+        const staffChannel = (await guild!.channels.fetch()).find(channel => channel!.id === staffChannelId)! as TextChannel;
+        await staffChannel.send({
+            embeds: [
+                new EmbedBuilder()
+                    .setTitle('Support Request Approved')
+                    .setDescription(`**Author:** <@${post.authorId}>\n**Approved by:** ${interaction.user}\n**Post:** ${channel}\n**Type:** ${forumSupportLabels[post.type]}`)
+                    .setColor('Random')
+                    .setTimestamp()
+            ]
+        });
     }
 
 } as SlashCommand;

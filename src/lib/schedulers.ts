@@ -1,21 +1,26 @@
 import { Client, GuildChannel } from 'discord.js';
 import cron from 'node-cron';
+import { getUghChannelId } from '../config/config';
 
 export function scheduleChannelLock(client: Client, guildId: string) {
+    const channelId = getUghChannelId();
+
     cron.schedule('0 0 23 * * *', async function () {
         const guild = client.guilds.cache.get(guildId)!;
-        const channel = guild.channels.cache.get('963533940159840297') as GuildChannel;
+        const channel = guild.channels.cache.get(channelId) as GuildChannel;
         const roles = await guild.roles.fetch();
-        await channel.permissionOverwrites.edit(roles.get('959144521621458974')!, {
+        const everyoneRole = roles.get(guild.roles.everyone.id);
+        await channel.permissionOverwrites.edit(everyoneRole!, {
             SendMessages: false
         });
     });
 
     cron.schedule('0 0 07 * * *', async function () {
         const guild = client.guilds.cache.get(guildId)!;
-        const channel = guild.channels.cache.get('963533940159840297') as GuildChannel;
+        const channel = guild.channels.cache.get(channelId) as GuildChannel;
         const roles = await guild.roles.fetch();
-        await channel.permissionOverwrites.edit(roles.get('959144521621458974')!, {
+        const everyoneRole = roles.get(guild.roles.everyone.id);
+        await channel.permissionOverwrites.edit(everyoneRole!, {
             SendMessages: true
         });
     });
