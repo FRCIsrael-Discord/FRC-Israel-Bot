@@ -4,6 +4,7 @@ import { SupportType } from './types/support';
 
 interface ConfigObject {
     'token': string;
+    'mongoURI': string;
     'roles': RolesObject;
     'supportSettings': {
         'channelId': string,
@@ -38,6 +39,10 @@ function updateConfigFile() {
 
 export function getBotToken(): string {
     return config.token;
+}
+
+export function getMongoURI(): string {
+    return config.mongoURI;
 }
 
 export function getTeamRoles(): string[] {

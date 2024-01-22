@@ -1,5 +1,6 @@
 {
     "token": "",
+    "mongoURI": "",
     "roles": {
         "teams": "",
         "noTeam": "",
