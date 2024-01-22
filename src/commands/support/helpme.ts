@@ -2,9 +2,10 @@ import crypto from 'crypto';
 import { ActionRowBuilder, ChannelType, CommandInteraction, ComponentType, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, ModalBuilder, StringSelectMenuBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { getSupportForum, getSupportRole } from '../../config/config';
 import { Bot, SlashCommand } from '../../lib/types/discord';
-import { forumSupportLabels } from '../../lib/types/support';
+import { SupportType, forumSupportLabels } from '../../lib/types/support';
 import { addCooldown, getTimeLeft } from '../../lib/support/cooldowns';
 import { logError } from '../../utils/logger';
+import { addPost } from '../../lib/database/support/posts';
 
 module.exports = {
     name: 'helpme',
@@ -60,12 +61,6 @@ module.exports = {
                 const tag = supportChannel.availableTags.find(tag => tag.name === collectorInteraction.values[0]);
                 if (!tag) return;
 
-                const supportRole = getSupportRole(Object.keys(forumSupportLabels).find(key => forumSupportLabels[key] === tag.name) as keyof typeof forumSupportLabels);
-                if (!supportRole) {
-                    await collectorInteraction.reply({ content: 'לא נמצא תפקיד תמיכה עבור הקטגוריה הנבחרת!', ephemeral: true });
-                    return;
-                }
-
                 const customModalId = crypto.randomBytes(10).toString('hex');
 
                 const modal = new ModalBuilder()
@@ -102,12 +97,11 @@ module.exports = {
                         if (!collectorInteraction.inCachedGuild()) return;
 
                         const nickname = collectorInteraction.member.displayName;
-                  
+
                         const post = await supportChannel.threads.create({
                             name: `${title} - ${nickname}`,
                             message: {
                                 content:
-                                    `||<@&${supportRole}>||` + '\n\n' +
                                     '**כותרת השאלה:**\n' +
                                     `${title}\n\n` +
                                     '**פירוט השאלה:**\n' +
@@ -120,10 +114,21 @@ module.exports = {
                         await post.lastMessage?.pin();
                         await post.lastMessage?.delete(); // deletes the 'pinned a message' message
 
+                        await post.send('הפוסט פורסם!\nברגע שצוות השרת יאשר את הפוסט, הבוט יתייג את העוזרים המתאימיים.');
+
                         await post.members.add(user.id);
 
                         await modalInteraction.editReply({ content: `השאלה נשלחה!\nניתן לצפות בפוסט שנפתח:\n\n <#${post.id}>`, components: [] });
                         addCooldown(user.id);
+
+                        await addPost({
+                            channelId: post.id,
+                            type: Object.keys(forumSupportLabels).find(key => forumSupportLabels[key as SupportType] === tag.name) as SupportType,
+                            approved: false,
+                            authorId: user.id,
+                            question,
+                            title,
+                        });
                     }).catch(async (err) => {
                         logError(err);
                         await collectorInteraction.editReply({ content: 'התרחשה שגיאה בעיבוד הבקשה!\nיש לפנות לצוות השרת בנושא זה.', components: [] });
