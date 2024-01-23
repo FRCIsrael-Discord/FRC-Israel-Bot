@@ -110,7 +110,13 @@ module.exports = {
                             return await modalInteraction.editReply({ content: 'התרחשה שגיאה בעיבוד הבקשה!\nיש לפנות לצוות השרת בנושא זה.', components: [] });
                         }
 
-                        const post = guild!.channels.cache.get(postChannelId) as ThreadChannel;
+                        const activeThreads = await guild!.channels.fetchActiveThreads();
+                        const post = activeThreads.threads.find(thread => thread.id === postChannelId);
+                        if (!post || !post.isThread()) {
+                            logError('Failed to fetch support thread!');
+                            return await modalInteraction.editReply({ content: 'התרחשה שגיאה בעיבוד הבקשה!\nיש לפנות לצוות השרת בנושא זה.', components: [] });
+                        }
+                        // const post = guild!.channels.cache.get(postChannelId) as ThreadChannel;
                         await post.setAppliedTags([tag.id]);
 
                         await post.lastMessage?.pin();

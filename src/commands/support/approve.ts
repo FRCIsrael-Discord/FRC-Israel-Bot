@@ -37,9 +37,11 @@ module.exports = {
             return await interaction.editReply({ content: 'Support role is not configured!' });
         }
 
+        const author = await guild!.members.fetch(post.authorId);
         const firstMessage = await channel.fetchStarterMessage();
-        firstMessage!.reply({ content: `<@&${supportRole}>\nשאלה זאת אושרה על ידי הצוות!` });
-        firstMessage!.author.send({ content: `**השאלה שלך בנושא "${post.title}" אושרה על ידי הצוות!**\nהאנשים המתאימים תוייגו ויענו לך בהמשך.\n\nניתן לצפות בשאלה כאן:\n<#${channel.id}>` });
+
+        await firstMessage!.reply({ content: `<@&${supportRole}>\nשאלה זאת אושרה על ידי הצוות!` });
+        await author.send({ content: `**השאלה שלך בנושא "${post.title}" אושרה על ידי הצוות!**\nהאנשים המתאימים תוייגו ויענו לך בהמשך.\n\nניתן לצפות בשאלה כאן:\n<#${channel.id}>` });
 
         await approvePost(post);
         await interaction.editReply({ content: 'Approved!' });
