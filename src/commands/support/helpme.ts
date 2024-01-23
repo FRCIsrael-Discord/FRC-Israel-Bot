@@ -114,7 +114,7 @@ module.exports = {
                         await post.lastMessage?.pin();
                         await post.lastMessage?.delete(); // deletes the 'pinned a message' message
 
-                        await post.send('הפוסט פורסם!\nברגע שצוות השרת יאשר את הפוסט, הבוט יתייג את העוזרים המתאימיים.');
+                        await post.send('הפוסט פורסם!\nברגע שצוות השרת יאשר את הפוסט, הבוט יתייג את העוזרים המתאימים.');
 
                         await post.members.add(user.id);
 
