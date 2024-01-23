@@ -1,6 +1,6 @@
 import { CommandInteraction, EmbedBuilder, TextChannel } from "discord.js";
 import { Bot, SlashCommand } from "../../lib/types/discord";
-import { getServerStaffChannelId, getSupportForum, getSupportRole } from "../../config/config";
+import { getSupportForum, getSupportLogsChannelId, getSupportRole } from "../../config/config";
 import { getPost } from "../../lib/database/support/posts";
 import { approvePost } from "../../lib/support/posts";
 import { forumSupportLabels } from "../../lib/types/support";
@@ -43,9 +43,9 @@ module.exports = {
         await approvePost(post);
         await interaction.editReply({ content: 'Approved!' });
 
-        const staffChannelId = getServerStaffChannelId();
-        const staffChannel = (await guild!.channels.fetch()).find(channel => channel!.id === staffChannelId)! as TextChannel;
-        await staffChannel.send({
+        const logsChannelId = getSupportLogsChannelId();
+        const logsChannel = (await guild!.channels.fetch()).find(channel => channel!.id === logsChannelId)! as TextChannel;
+        await logsChannel.send({
             embeds: [
                 new EmbedBuilder()
                     .setTitle('Support Request Approved')

@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { ActionRowBuilder, ChannelType, CommandInteraction, ComponentType, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, ModalBuilder, StringSelectMenuBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
-import { getSupportForum, getSupportRole } from '../../config/config';
+import { getStaffRoleId, getSupportForum, getSupportRole } from '../../config/config';
 import { Bot, SlashCommand } from '../../lib/types/discord';
 import { SupportType, forumSupportLabels } from '../../lib/types/support';
 import { addCooldown, getTimeLeft } from '../../lib/support/cooldowns';
@@ -114,7 +114,7 @@ module.exports = {
                         await post.lastMessage?.pin();
                         await post.lastMessage?.delete(); // deletes the 'pinned a message' message
 
-                        await post.send('הפוסט פורסם!\nברגע שצוות השרת יאשר את הפוסט, הבוט יתייג את העוזרים המתאימיים.');
+                        await post.send(`הפוסט פורסם!\nברגע שצוות השרת יאשר את הפוסט, הבוט יתייג את העוזרים המתאימיים.\n\n||<@&${getStaffRoleId()}>||`);
 
                         await post.members.add(user.id);
 

@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, ChannelType, CommandInteraction } from 'discord.js';
-import { setSupportCooldown, setSupportForum, setSupportRole } from '../../config/config';
+import { setSupportCooldown, setSupportForum, setSupportLogsChannelId, setSupportRole } from '../../config/config';
 import { Bot, SlashCommand } from '../../lib/types/discord';
 import { SupportType, forumSupportLabels } from '../../lib/types/support';
 import { logError } from '../../utils/logger';
@@ -43,6 +43,19 @@ module.exports = {
                     type: ApplicationCommandOptionType.Channel,
                     required: true,
                     channelTypes: [ChannelType.GuildForum]
+                }
+            ]
+        },
+        {
+            name: 'logs-channel',
+            description: 'Configure support logs channel',
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: 'channel',
+                    description: 'The support logs channel to set',
+                    type: ApplicationCommandOptionType.Channel,
+                    required: true,
                 }
             ]
         },
@@ -94,6 +107,16 @@ module.exports = {
             try {
                 setSupportCooldown(cooldown);
                 await interaction.editReply({ content: `Support cooldown has been updated!\nCooldown: ${cooldown}` });
+            } catch (err) {
+                logError(err);
+                return await interaction.editReply({ content: 'An error occurred while updating support settings!' });
+            }
+        } else if (options.getSubcommand() === 'logs-channel') {
+            const channel = options.getChannel('channel', true);
+
+            try {
+                setSupportLogsChannelId(channel.id);
+                await interaction.editReply({ content: `Support logs channel has been updated!\nChannel: <#${channel.id}>` });
             } catch (err) {
                 logError(err);
                 return await interaction.editReply({ content: 'An error occurred while updating support settings!' });

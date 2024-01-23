@@ -3,14 +3,15 @@ import { logWarn } from '../utils/logger';
 import { SupportType } from '../lib/types/support'
 
 interface ConfigObject {
-    'token': string;
-    'mongoURI': string;
-    'roles': Roles;
-    'channels': Channels;
-    'supportSettings': {
-        'channelId': string,
-        'cooldown': number,
-        'roles': {
+    token: string;
+    mongoURI: string;
+    roles: Roles;
+    channels: Channels;
+    supportSettings: {
+        channelId: string,
+        logsChannelId: string,
+        cooldown: number,
+        roles: {
             [key in SupportType]: string;
         }
     };
@@ -20,11 +21,11 @@ interface Roles {
     teams: string[];
     noTeam: string;
     ftc: string;
+    staff: string;
 };
 
 interface Channels {
     ugh: string;
-    staff: string;
 }
 
 
@@ -113,16 +114,25 @@ export function getUghChannelId() {
     return config.channels.ugh;
 }
 
-export function getServerStaffChannelId() {
-    return config.channels.staff;
-}
-
 export function setUghChannelId(channelId: string) {
     config.channels.ugh = channelId;
     updateConfigFile();
 }
 
-export function setServerStaffChannelId(channelId: string) {
-    config.channels.staff = channelId;
+export function getStaffRoleId(): string {
+    return config.roles.staff;
+}
+
+export function setStaffRoleId(roleId: string) {
+    config.roles.staff = roleId;
+    updateConfigFile();
+}
+
+export function getSupportLogsChannelId() {
+    return config.supportSettings.logsChannelId;
+}
+
+export function setSupportLogsChannelId(channelId: string) {
+    config.supportSettings.logsChannelId = channelId;
     updateConfigFile();
 }
