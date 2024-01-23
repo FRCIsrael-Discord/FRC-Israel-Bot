@@ -102,9 +102,6 @@ module.exports = {
                             name: `${title} - ${nickname}`,
                             message: {
                                 content:
-                                    '**כותרת השאלה:**\n' +
-                                    `${title}\n\n` +
-                                    '**פירוט השאלה:**\n' +
                                     `${question}\n\n\n` +
                                     `_(נשאל על ידי ${collectorInteraction.user})_`
                             },
