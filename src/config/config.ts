@@ -10,6 +10,7 @@ interface ConfigObject {
     supportSettings: {
         channelId: string,
         logsChannelId: string,
+        webhookURL: string,
         cooldown: number,
         roles: {
             [key in SupportType]: string;
@@ -134,5 +135,14 @@ export function getSupportLogsChannelId() {
 
 export function setSupportLogsChannelId(channelId: string) {
     config.supportSettings.logsChannelId = channelId;
+    updateConfigFile();
+}
+
+export function getSupportWebhookURL() {
+    return config.supportSettings.webhookURL;
+}
+
+export function setSupportWebhookURL(url: string) {
+    config.supportSettings.webhookURL = url;
     updateConfigFile();
 }

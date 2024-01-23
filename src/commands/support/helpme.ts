@@ -1,11 +1,12 @@
 import crypto from 'crypto';
-import { ActionRowBuilder, ChannelType, CommandInteraction, ComponentType, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, ModalBuilder, StringSelectMenuBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { ActionRowBuilder, ChannelType, CommandInteraction, ComponentType, MessageActionRowComponentBuilder, ModalActionRowComponentBuilder, ModalBuilder, StringSelectMenuBuilder, TextInputBuilder, TextInputStyle, ThreadChannel, WebhookClient } from 'discord.js';
 import { getHelperRoleId, getSupportForum, getSupportRole } from '../../config/config';
 import { Bot, SlashCommand } from '../../lib/types/discord';
 import { SupportType, forumSupportLabels } from '../../lib/types/support';
 import { addCooldown, getTimeLeft } from '../../lib/support/cooldowns';
 import { logError } from '../../utils/logger';
 import { addPost } from '../../lib/database/support/posts';
+import { createSupportThread } from '../../lib/database/support/webhook';
 
 module.exports = {
     name: 'helpme',
@@ -17,13 +18,13 @@ module.exports = {
 
     execute: async (bot: Bot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
-        const { user } = interaction;
+        const { user, guild } = interaction;
 
         const supportChannelId = getSupportForum();
         if (!supportChannelId) {
             return await interaction.editReply(`לא הוגדר צ'אנל פורום!\nיש לפנות לצוות השרת בנושא זה.`);
         }
-        const supportChannel = interaction.guild!.channels.cache.get(supportChannelId)!;
+        const supportChannel = guild!.channels.cache.get(supportChannelId)!;
         if (supportChannel.type !== ChannelType.GuildForum) {
             return await interaction.editReply(`ניתן לבקש עזרה רק בצ'אנל מסוג פורום!`)
         }
@@ -98,25 +99,24 @@ module.exports = {
 
                         const nickname = collectorInteraction.member.displayName;
 
-                        const post = await supportChannel.threads.create({
-                            name: `${title} - ${nickname}`,
-                            message: {
-                                content:
-                                    `${question}\n\n\n` +
-                                    `_(נשאל על ידי ${collectorInteraction.user})_`
-                            },
-                            appliedTags: [tag.id],
-                        });
+                        const postChannelId = await createSupportThread({
+                            threadName: `${title} - ${nickname}`,
+                            content: `${question}\n\n\n_(נשאל על ידי ${collectorInteraction.user})_\n||<@&${getHelperRoleId()}>||`,
+                            username: nickname,
+                            avatarURL: user.displayAvatarURL(),
+                        })
+                        if (!postChannelId) {
+                            logError('Failed to create support thread! The support webhook is not configured!');
+                            return await modalInteraction.editReply({ content: 'התרחשה שגיאה בעיבוד הבקשה!\nיש לפנות לצוות השרת בנושא זה.', components: [] });
+                        }
+
+                        const post = guild!.channels.cache.get(postChannelId) as ThreadChannel;
+                        await post.setAppliedTags([tag.id]);
 
                         await post.lastMessage?.pin();
                         await post.lastMessage?.delete(); // deletes the 'pinned a message' message
 
-                        await post.send(`הפוסט פורסם!\nברגע שצוות השרת יאשר את הפוסט, הבוט יתייג את העוזרים המתאימים.\n\n||<@&${getHelperRoleId()}>||`);
-
                         await post.members.add(user.id);
-
-                        await modalInteraction.editReply({ content: `השאלה נשלחה!\nניתן לצפות בפוסט שנפתח:\n\n <#${post.id}>`, components: [] });
-                        addCooldown(user.id);
 
                         await addPost({
                             channelId: post.id,
@@ -126,6 +126,11 @@ module.exports = {
                             question,
                             title,
                         });
+
+                        addCooldown(user.id);
+                        await modalInteraction.editReply({ content: `השאלה נשלחה!\nניתן לצפות בפוסט שנפתח:\n\n <#${post.id}>`, components: [] });
+                        await user.send(`**הפוסט שלך בנושא "${title}" פורסם!**\nברגע שצוות השרת יאשר את הפוסט, הבוט יתייג את העוזרים המתאימים\n\nניתן לצפות בו כאן:\n<#${post.id}>`);
+
                     }).catch(async (err) => {
                         logError(err);
                         await collectorInteraction.editReply({ content: 'התרחשה שגיאה בעיבוד הבקשה!\nיש לפנות לצוות השרת בנושא זה.', components: [] });

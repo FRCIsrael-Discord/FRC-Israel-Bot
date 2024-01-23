@@ -1,7 +1,7 @@
 import { logInfo } from './utils/logger';
 logInfo('Starting bot...')
 
-import { Client, Collection, IntentsBitField } from 'discord.js';
+import { Client, Collection, IntentsBitField, WebhookClient } from 'discord.js';
 import { initDbClient } from './lib/database/mongo';
 import { loadEvents } from './handlers/eventsHandler';
 import { loadSlashCommands } from './handlers/slashCommandsHandler';

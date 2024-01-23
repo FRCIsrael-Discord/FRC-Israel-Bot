@@ -13,6 +13,7 @@
     "supportSettings": {
         "channelId": "",
         "logsChannelId": "",
+        "webhookURL": "",
         "cooldown": 0,
         "roles": {
             "programming": "",

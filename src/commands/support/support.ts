@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, ChannelType, CommandInteraction } from 'discord.js';
-import { setSupportCooldown, setSupportForum, setSupportLogsChannelId, setSupportRole } from '../../config/config';
+import { setSupportCooldown, setSupportForum, setSupportLogsChannelId, setSupportRole, setSupportWebhookURL } from '../../config/config';
 import { Bot, SlashCommand } from '../../lib/types/discord';
 import { SupportType, forumSupportLabels } from '../../lib/types/support';
 import { logError } from '../../utils/logger';
@@ -59,6 +59,20 @@ module.exports = {
                 }
             ]
         },
+
+        {
+            name: 'webhook',
+            description: 'Configure the support webhook',
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: 'webhook',
+                    description: 'The support webhook to set',
+                    type: ApplicationCommandOptionType.String,
+                    required: true,
+                }
+            ]
+        },
         {
             name: 'cooldown',
             description: 'Configure support cooldown',
@@ -108,6 +122,17 @@ module.exports = {
                 setSupportCooldown(cooldown);
                 await interaction.editReply({ content: `Support cooldown has been updated!\nCooldown: ${cooldown}` });
             } catch (err) {
+                logError(err);
+                return await interaction.editReply({ content: 'An error occurred while updating support settings!' });
+            }
+        } else if (options.getSubcommand() === 'webhook') {
+            const webhook = options.getString('webhook', true);
+
+            try {
+                setSupportWebhookURL(webhook);
+                await interaction.editReply({ content: `Support webhook has been updated!` });
+            }
+            catch (err) {
                 logError(err);
                 return await interaction.editReply({ content: 'An error occurred while updating support settings!' });
             }
