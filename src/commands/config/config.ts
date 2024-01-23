@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, CommandInteraction } from 'discord.js';
-import { setStaffRoleId, setUghChannelId } from '../../config/config';
+import { setHelperRoleId, setUghChannelId } from '../../config/config';
 import { Bot, SlashCommand } from '../../lib/types/discord';
 import { logError } from '../../utils/logger';
 
@@ -53,15 +53,15 @@ module.exports = {
                 logError(err);
                 return await interaction.editReply({ content: 'An error occurred while updating the אוח channel!' });
             }
-        } else if (options.getSubcommand() === 'staff-role') {
+        } else if (options.getSubcommand() === 'helper-role') {
             const role = options.getRole('role', true);
 
             try {
-                setStaffRoleId(role.id);
-                await interaction.editReply({ content: `Staff role has been updated!\nRole: <@&${role.id}>` });
+                setHelperRoleId(role.id);
+                await interaction.editReply({ content: `Helper role has been updated!\nRole: <@&${role.id}>` });
             } catch (err) {
                 logError(err);
-                return await interaction.editReply({ content: 'An error occurred while updating the staff role!' });
+                return await interaction.editReply({ content: 'An error occurred while updating the helper role!' });
             }
         }
     }

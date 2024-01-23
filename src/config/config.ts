@@ -21,7 +21,7 @@ interface Roles {
     teams: string[];
     noTeam: string;
     ftc: string;
-    staff: string;
+    helper: string;
 };
 
 interface Channels {
@@ -119,12 +119,12 @@ export function setUghChannelId(channelId: string) {
     updateConfigFile();
 }
 
-export function getStaffRoleId(): string {
-    return config.roles.staff;
+export function getHelperRoleId(): string {
+    return config.roles.helper;
 }
 
-export function setStaffRoleId(roleId: string) {
-    config.roles.staff = roleId;
+export function setHelperRoleId(roleId: string) {
+    config.roles.helper = roleId;
     updateConfigFile();
 }
 
