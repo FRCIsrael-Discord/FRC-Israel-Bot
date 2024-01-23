@@ -25,13 +25,13 @@ module.exports = {
             ]
         },
         {
-            name: 'staff-role',
-            description: 'Updates the staff role ID in the config',
+            name: 'helper-role',
+            description: 'Updates the helper role ID in the config',
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
                     name: 'role',
-                    description: 'The staff role to set',
+                    description: 'The helper role to set',
                     type: ApplicationCommandOptionType.Role,
                     required: true,
                 },
