@@ -4,6 +4,7 @@ import { getSupportForum, getSupportLogsChannelId, getSupportRole } from "../../
 import { getPost } from "../../lib/database/support/posts";
 import { approvePost } from "../../lib/support/posts";
 import { forumSupportLabels } from "../../lib/types/support";
+import { editWebhookMessage, sendWebhookMessage } from "../../lib/database/support/webhook";
 
 module.exports = {
     name: 'approve',
@@ -14,7 +15,8 @@ module.exports = {
 
     execute: async (bot: Bot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
-        const { guild, channel } = interaction;
+        if (!interaction.inCachedGuild()) return;
+        const { member, guild, channel } = interaction;
 
         const supportChannelId = getSupportForum();
         if (!supportChannelId) {
@@ -37,11 +39,22 @@ module.exports = {
             return await interaction.editReply({ content: 'Support role is not configured!' });
         }
 
-        const author = await guild!.members.fetch(post.authorId);
-        const firstMessage = await channel.fetchStarterMessage();
+        const postAuthor = await guild!.members.fetch(post.authorId);
 
-        await firstMessage!.reply({ content: `<@&${supportRole}>\nשאלה זאת אושרה על ידי הצוות!` });
-        await author.send({ content: `**השאלה שלך בנושא "${post.title}" אושרה על ידי הצוות!**\nהאנשים המתאימים תוייגו ויענו לך בהמשך.\n\nניתן לצפות בשאלה כאן:\n<#${channel.id}>` });
+        (await channel.send({ content: `<@&${supportRole}>` })).delete(); // ghost ping the support role
+        const message = await sendWebhookMessage({
+            threadId: channel.id,
+            content: `Loading...`,
+            username: member.displayName,
+            avatarURL: member.displayAvatarURL()
+        });
+        // edit message to include the ping
+        await editWebhookMessage(message!.id, {
+            threadId: channel.id,
+            content: `<@&${supportRole}>`,
+        });
+
+        await postAuthor.send({ content: `**השאלה שלך בנושא "${post.title}" אושרה על ידי הצוות!**\nהאנשים המתאימים תוייגו ויענו לך בהמשך.\n\nניתן לצפות בשאלה כאן:\n<#${channel.id}>` });
 
         await approvePost(post);
         await interaction.editReply({ content: 'Approved!' });

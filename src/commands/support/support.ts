@@ -1,8 +1,9 @@
 import { ApplicationCommandOptionType, ChannelType, CommandInteraction } from 'discord.js';
-import { setSupportCooldown, setSupportForum, setSupportLogsChannelId, setSupportRole, setSupportWebhookURL } from '../../config/config';
+import { getSupportWebhookURL, setSupportCooldown, setSupportForum, setSupportLogsChannelId, setSupportRole, setSupportWebhookURL } from '../../config/config';
 import { Bot, SlashCommand } from '../../lib/types/discord';
 import { SupportType, forumSupportLabels } from '../../lib/types/support';
 import { logError } from '../../utils/logger';
+import { initWebhookManager } from '../../lib/database/support/webhook';
 
 module.exports = {
     name: 'support',
@@ -66,8 +67,14 @@ module.exports = {
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
-                    name: 'webhook',
-                    description: 'The support webhook to set',
+                    name: 'id',
+                    description: 'The support webhook ID to set',
+                    type: ApplicationCommandOptionType.String,
+                    required: true,
+                },
+                {
+                    name: 'token',
+                    description: 'The support webhook token to set',
                     type: ApplicationCommandOptionType.String,
                     required: true,
                 }
@@ -126,11 +133,20 @@ module.exports = {
                 return await interaction.editReply({ content: 'An error occurred while updating support settings!' });
             }
         } else if (options.getSubcommand() === 'webhook') {
-            const webhook = options.getString('webhook', true);
+            const webhookID = options.getString('id', true);
+            const webhookToken = options.getString('token', true);
+            const webhook = `${webhookID}/${webhookToken}`;
 
             try {
+                const oldSupportWebhookURL = getSupportWebhookURL();
                 setSupportWebhookURL(webhook);
-                await interaction.editReply({ content: `Support webhook has been updated!` });
+                const result = await initWebhookManager(bot.client);
+                if (!result) {
+                    await interaction.editReply({ content: `Failed to fetch support webhook!` });
+                    setSupportWebhookURL(oldSupportWebhookURL);
+                } else {
+                    await interaction.editReply({ content: `Support webhook has been updated!` });
+                }
             }
             catch (err) {
                 logError(err);

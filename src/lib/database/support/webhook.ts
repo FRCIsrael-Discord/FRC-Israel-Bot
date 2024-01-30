@@ -1,30 +1,45 @@
-import { WebhookClient } from "discord.js";
+import { Client, Message, Webhook } from "discord.js";
 import { getSupportWebhookURL } from "../../../config/config";
+import { logError } from "../../../utils/logger";
 
-interface SupportWebhookPayload {
-    threadName: string;
+interface WebhookPayload {
     content: string;
-    username: string;
-    avatarURL: string;
+    username?: string;
+    avatarURL?: string;
+    threadName?: string;
+    threadId?: string;
 }
 
-let webhookClient;
+let webhook: Webhook | undefined;
 
-export function initSupportWebhookManager() {
-    if (webhookClient) {
-        return;
+export async function initWebhookManager(client: Client): Promise<boolean> {
+    try {
+        webhook = await client.fetchWebhook(getSupportWebhookURL());
+        return true;
+    } catch (err) {
+        logError('Failed to fetch support webhook!');
+        return false;
     }
-
-    webhookClient = new WebhookClient({ url: getSupportWebhookURL() });
 }
 
-export async function createSupportThread(payload: SupportWebhookPayload): Promise<string | null> {
-    if (!webhookClient) {
-        if (!getSupportWebhookURL()) return null;
-        else initSupportWebhookManager();
-    }
+export async function sendWebhookMessage(payload: WebhookPayload): Promise<Message | null> {
+    if (!webhook) return null;
 
-    const message = await webhookClient.send(payload);
+    const message = await webhook.send({
+        ...payload,
+        allowedMentions: { parse: ['users', 'roles'] }
+    });
 
-    return message.channel_id;
+    return message;
+}
+
+export async function editWebhookMessage(messageId: string, payload: WebhookPayload): Promise<Message | null> {
+    if (!webhook) return null;
+
+    const message = await webhook.fetchMessage(messageId, payload);
+
+    return await webhook.editMessage(message, {
+        ...payload,
+        allowedMentions: { parse: ['users', 'roles'] }
+    });
 }

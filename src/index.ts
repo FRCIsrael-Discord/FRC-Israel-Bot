@@ -14,6 +14,7 @@ import { Button } from './lib/types/discord/button';
 import { Modal } from './lib/types/discord/modal';
 import { loadModals } from './handlers/modalsHandler';
 import { getBotToken } from './config/config';
+import { initWebhookManager } from './lib/database/support/webhook';
 
 const myTestServerId = '851789251754328064';
 const FRCIsraelId = '959144521621458974'
@@ -54,4 +55,6 @@ loadModals(bot, false);
 
 scheduleChannelLock(bot.client, FRCIsraelId);
 
-client.login(getBotToken());
+client.login(getBotToken()).then(async () => {
+    initWebhookManager(client);
+});

@@ -6,7 +6,7 @@ import { SupportType, forumSupportLabels } from '../../lib/types/support';
 import { addCooldown, getTimeLeft } from '../../lib/support/cooldowns';
 import { logError } from '../../utils/logger';
 import { addPost } from '../../lib/database/support/posts';
-import { createSupportThread } from '../../lib/database/support/webhook';
+import { editWebhookMessage, sendWebhookMessage } from '../../lib/database/support/webhook';
 
 module.exports = {
     name: 'helpme',
@@ -99,30 +99,33 @@ module.exports = {
 
                         const nickname = collectorInteraction.member.displayName;
 
-                        const postChannelId = await createSupportThread({
+                        const postMessage = await sendWebhookMessage({
                             threadName: `${title} - ${nickname}`,
-                            content: `${question}\n\n\n_(נשאל על ידי ${collectorInteraction.user})_\n||<@&${getHelperRoleId()}>||`,
+                            content: `${question}`,
                             username: nickname,
                             avatarURL: user.displayAvatarURL(),
                         })
-                        if (!postChannelId) {
+                        if (!postMessage) {
                             logError('Failed to create support thread! The support webhook is not configured!');
                             return await modalInteraction.editReply({ content: 'התרחשה שגיאה בעיבוד הבקשה!\nיש לפנות לצוות השרת בנושא זה.', components: [] });
                         }
 
                         const activeThreads = await guild!.channels.fetchActiveThreads();
-                        const post = activeThreads.threads.find(thread => thread.id === postChannelId);
+                        const post = activeThreads.threads.find(thread => thread.id === postMessage.channelId);
                         if (!post || !post.isThread()) {
                             logError('Failed to fetch support thread!');
                             return await modalInteraction.editReply({ content: 'התרחשה שגיאה בעיבוד הבקשה!\nיש לפנות לצוות השרת בנושא זה.', components: [] });
                         }
-                        // const post = guild!.channels.cache.get(postChannelId) as ThreadChannel;
                         await post.setAppliedTags([tag.id]);
 
+                        const firstMessage = post.lastMessage;
                         await post.lastMessage?.pin();
                         await post.lastMessage?.delete(); // deletes the 'pinned a message' message
-
-                        await post.members.add(user.id);
+                        await (await post.send(`<@${user.id}> <@&${getHelperRoleId()}>`)).delete(); // ghost ping the user
+                        await editWebhookMessage(firstMessage!.id, {
+                            threadId: post.id,
+                            content: `${question}\n\n\n_(נשאל על ידי ${collectorInteraction.user})_\n||<@&${getHelperRoleId()}>||`
+                        });
 
                         await addPost({
                             channelId: post.id,
