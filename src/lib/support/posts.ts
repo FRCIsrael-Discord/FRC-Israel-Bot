@@ -16,9 +16,10 @@ export async function approvePost(post: SupportPost, approvedBy: string) {
     return true;
 }
 
-export async function denyPost(post: SupportPost, deniedBy: string) {
+export async function denyPost(post: SupportPost, deniedBy: string, reason: string) {
     post.denied = true;
     post.deniedBy = deniedBy;
+    post.deniedReason = reason;
     await updatePost(post);
 
     return true;

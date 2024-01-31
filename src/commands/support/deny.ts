@@ -1,4 +1,4 @@
-import { CommandInteraction, EmbedBuilder, TextChannel, ThreadChannel } from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction, EmbedBuilder, TextChannel, ThreadChannel } from "discord.js";
 import { Bot, SlashCommand } from "../../lib/types/discord";
 import { getSupportForum, getSupportLogsChannelId, getSupportRole } from "../../config/config";
 import { getPost } from "../../lib/database/support/posts";
@@ -13,10 +13,21 @@ module.exports = {
     description: 'Deny a support request',
     botPermissions: ['SendMessages'],
 
+    options: [
+        {
+            name: 'reason',
+            description: 'The reason for denying this thread',
+            type: ApplicationCommandOptionType.String,
+            required: true
+        }
+    ],
+
     execute: async (bot: Bot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         if (!interaction.inCachedGuild()) return;
-        const { guild, channel } = interaction;
+        const { options, guild, channel } = interaction;
+
+        const reason = options.getString('reason', true);
 
         const supportChannelId = getSupportForum();
         if (!supportChannelId) {
@@ -47,7 +58,7 @@ module.exports = {
         await interaction.editReply({ content: 'Denied!' });
         await channel.setLocked(true, 'Denied by staff');
         await channel.setArchived(true, 'Denied by staff');
-        await denyPost(post, interaction.user.id);
+        await denyPost(post, interaction.user.id, reason);
 
         const logsChannelId = getSupportLogsChannelId();
         const logsChannel = (await guild!.channels.fetch()).find(channel => channel!.id === logsChannelId)! as TextChannel;
@@ -55,7 +66,7 @@ module.exports = {
             embeds: [
                 new EmbedBuilder()
                     .setTitle('Support Request Denied')
-                    .setDescription(`**Author:** <@${post.authorId}>\n\**Denied by:** ${interaction.user}\n**Post:** ${channel}\n**Type:** ${forumSupportLabels[post.type]}`)
+                    .setDescription(`**Author:** <@${post.authorId}>\n\**Denied by:** ${interaction.user}\n**Post:** ${channel}\n**Reason:** ${reason}\n**Type:** ${forumSupportLabels[post.type]}`)
                     .setColor('Red')
                     .setTimestamp()
             ]

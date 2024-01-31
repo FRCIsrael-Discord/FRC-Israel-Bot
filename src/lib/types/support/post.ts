@@ -10,4 +10,5 @@ export interface SupportPost {
     denied: boolean;
     approvedBy?: string;
     deniedBy?: string;
+    deniedReason?: string;
 }
