@@ -131,6 +131,7 @@ module.exports = {
                             channelId: post.id,
                             type: Object.keys(forumSupportLabels).find(key => forumSupportLabels[key as SupportType] === tag.name) as SupportType,
                             approved: false,
+                            denied: false,
                             authorId: user.id,
                             question,
                             title,

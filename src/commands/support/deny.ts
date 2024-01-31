@@ -1,22 +1,22 @@
-import { CommandInteraction, EmbedBuilder, TextChannel } from "discord.js";
+import { CommandInteraction, EmbedBuilder, TextChannel, ThreadChannel } from "discord.js";
 import { Bot, SlashCommand } from "../../lib/types/discord";
 import { getSupportForum, getSupportLogsChannelId, getSupportRole } from "../../config/config";
 import { getPost } from "../../lib/database/support/posts";
-import { approvePost } from "../../lib/support/posts";
+import { approvePost, denyPost } from "../../lib/support/posts";
 import { forumSupportLabels } from "../../lib/types/support";
 import { editWebhookMessage, sendWebhookMessage } from "../../lib/database/support/webhook";
 
 module.exports = {
-    name: 'approve',
+    name: 'deny',
     category: 'Support',
     ephemeral: true,
-    description: 'Approve a support request and pings the matching support role',
+    description: 'Deny a support request',
     botPermissions: ['SendMessages'],
 
     execute: async (bot: Bot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         if (!interaction.inCachedGuild()) return;
-        const { member, guild, channel } = interaction;
+        const { guild, channel } = interaction;
 
         const supportChannelId = getSupportForum();
         if (!supportChannelId) {
@@ -30,42 +30,33 @@ module.exports = {
         if (!post) {
             return await interaction.editReply({ content: 'This thread doesn\'t exists in the database!\n\nProbably an old thread before the ping update.\nPlease contact the server owner.' });
         }
-        if (post.denied) {
-            return await interaction.editReply({ content: 'You can\'t approve a denied thread!' });
-        }
         if (post.approved) {
-            return await interaction.editReply({ content: 'This thread is already approved!' });
+            return await interaction.editReply({ content: 'You can\'t deny an approved thread!' });
+        }
+        if (post.denied) {
+            return await interaction.editReply({ content: 'This thread is already denied!' });
         }
 
-        const supportRole = getSupportRole(post.type);
-        if (!supportRole) {
-            return await interaction.editReply({ content: 'Support role is not configured!' });
-        }
 
-        (await channel.send({ content: `<@&${supportRole}>` })).delete(); // ghost ping the support role
-        const message = await sendWebhookMessage({
-            threadId: channel.id,
-            content: `Loading...`,
-            username: member.displayName,
-            avatarURL: member.displayAvatarURL()
-        });
-        // edit message to include the ping
-        await editWebhookMessage(message!.id, {
-            threadId: channel.id,
-            content: `<@&${supportRole}>`,
-        });
+        const postAuthor = await guild!.members.fetch(post.authorId);
 
-        await approvePost(post, interaction.user.id);
-        await interaction.editReply({ content: 'Approved!' });
+
+        await channel.send({ content: `השאלה נדחתה על ידי הצוות.` });
+        await postAuthor.send({ content: `**השאלה שלך בנושא "${post.title}" נדחתה על ידי צוות השרת!**\n\nבמידה ואת/ה חושב/ת שזה טעות, יש לפתוח פנייה על שליחת הודעה פרטית לModMail של השרת\n(נמצא למעלה ברשימת הממברים בשרת)` });
+
+        await interaction.editReply({ content: 'Denied!' });
+        await channel.setLocked(true, 'Denied by staff');
+        await channel.setArchived(true, 'Denied by staff');
+        await denyPost(post, interaction.user.id);
 
         const logsChannelId = getSupportLogsChannelId();
         const logsChannel = (await guild!.channels.fetch()).find(channel => channel!.id === logsChannelId)! as TextChannel;
         await logsChannel.send({
             embeds: [
                 new EmbedBuilder()
-                    .setTitle('Support Request Approved')
-                    .setDescription(`**Author:** <@${post.authorId}>\n**Approved by:** ${interaction.user}\n**Post:** ${channel}\n**Type:** ${forumSupportLabels[post.type]}`)
-                    .setColor('Green')
+                    .setTitle('Support Request Denied')
+                    .setDescription(`**Author:** <@${post.authorId}>\n\**Denied by:** ${interaction.user}\n**Post:** ${channel}\n**Type:** ${forumSupportLabels[post.type]}`)
+                    .setColor('Red')
                     .setTimestamp()
             ]
         });
