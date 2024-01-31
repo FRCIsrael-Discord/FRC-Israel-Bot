@@ -54,8 +54,6 @@ module.exports = {
             content: `<@&${supportRole}>`,
         });
 
-        await postAuthor.send({ content: `**השאלה שלך בנושא "${post.title}" אושרה על ידי הצוות!**\nהאנשים המתאימים תוייגו ויענו לך בהמשך.\n\nניתן לצפות בשאלה כאן:\n<#${channel.id}>` });
-
         await approvePost(post);
         await interaction.editReply({ content: 'Approved!' });
 
