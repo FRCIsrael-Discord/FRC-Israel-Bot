@@ -30,6 +30,9 @@ module.exports = {
         if (!post) {
             return await interaction.editReply({ content: 'This thread doesn\'t exists in the database!\n\nProbably an old thread before the ping update.\nPlease contact the server owner.' });
         }
+        if (post.denied) {
+            return await interaction.editReply({ content: 'You can\'t approve a denied thread!' });
+        }
         if (post.approved) {
             return await interaction.editReply({ content: 'This thread is already approved!' });
         }
@@ -38,8 +41,6 @@ module.exports = {
         if (!supportRole) {
             return await interaction.editReply({ content: 'Support role is not configured!' });
         }
-
-        const postAuthor = await guild!.members.fetch(post.authorId);
 
         (await channel.send({ content: `<@&${supportRole}>` })).delete(); // ghost ping the support role
         const message = await sendWebhookMessage({
@@ -54,9 +55,7 @@ module.exports = {
             content: `<@&${supportRole}>`,
         });
 
-        await postAuthor.send({ content: `**השאלה שלך בנושא "${post.title}" אושרה על ידי הצוות!**\nהאנשים המתאימים תוייגו ויענו לך בהמשך.\n\nניתן לצפות בשאלה כאן:\n<#${channel.id}>` });
-
-        await approvePost(post);
+        await approvePost(post, interaction.user.id);
         await interaction.editReply({ content: 'Approved!' });
 
         const logsChannelId = getSupportLogsChannelId();
@@ -66,7 +65,7 @@ module.exports = {
                 new EmbedBuilder()
                     .setTitle('Support Request Approved')
                     .setDescription(`**Author:** <@${post.authorId}>\n**Approved by:** ${interaction.user}\n**Post:** ${channel}\n**Type:** ${forumSupportLabels[post.type]}`)
-                    .setColor('Random')
+                    .setColor('Green')
                     .setTimestamp()
             ]
         });

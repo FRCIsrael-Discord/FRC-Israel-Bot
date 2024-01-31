@@ -131,6 +131,7 @@ module.exports = {
                             channelId: post.id,
                             type: Object.keys(forumSupportLabels).find(key => forumSupportLabels[key as SupportType] === tag.name) as SupportType,
                             approved: false,
+                            denied: false,
                             authorId: user.id,
                             question,
                             title,
@@ -138,7 +139,6 @@ module.exports = {
 
                         addCooldown(user.id);
                         await modalInteraction.editReply({ content: `השאלה נשלחה!\nניתן לצפות בפוסט שנפתח:\n\n <#${post.id}>`, components: [] });
-                        await user.send(`**הפוסט שלך בנושא "${title}" פורסם!**\nברגע שצוות השרת יאשר את הפוסט, הבוט יתייג את העוזרים המתאימים\n\nניתן לצפות בו כאן:\n<#${post.id}>`);
 
                     }).catch(async (err) => {
                         logError(err);

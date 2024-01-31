@@ -7,4 +7,8 @@ export interface SupportPost {
     type: SupportType;
     authorId: string;
     approved: boolean;
+    denied: boolean;
+    approvedBy?: string;
+    deniedBy?: string;
+    deniedReason?: string;
 }

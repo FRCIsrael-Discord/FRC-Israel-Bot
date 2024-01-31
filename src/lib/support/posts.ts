@@ -8,8 +8,18 @@ export async function isPostApproved(channelId: string) {
     return post.approved;
 }
 
-export async function approvePost(post: SupportPost) {
+export async function approvePost(post: SupportPost, approvedBy: string) {
     post.approved = true;
+    post.approvedBy = approvedBy;
+    await updatePost(post);
+
+    return true;
+}
+
+export async function denyPost(post: SupportPost, deniedBy: string, reason: string) {
+    post.denied = true;
+    post.deniedBy = deniedBy;
+    post.deniedReason = reason;
     await updatePost(post);
 
     return true;
