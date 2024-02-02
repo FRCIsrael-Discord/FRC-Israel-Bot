@@ -66,7 +66,7 @@ module.exports = {
 
                 const modal = new ModalBuilder()
                     .setCustomId(customModalId)
-                    .setTitle(`בקשת עזרה בנושא ${tag.name}`)
+                    .setTitle(`שליחת שאלה בנושא ${tag.name}`)
 
                 const titleInput = new TextInputBuilder()
                     .setCustomId('titleInput')
