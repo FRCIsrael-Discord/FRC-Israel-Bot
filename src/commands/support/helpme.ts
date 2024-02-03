@@ -18,7 +18,8 @@ module.exports = {
 
     execute: async (bot: Bot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
-        const { user, guild } = interaction;
+        if (!interaction.inCachedGuild()) return;
+        const { member, guild } = interaction;
 
         const supportChannelId = getSupportForum();
         if (!supportChannelId) {
@@ -29,7 +30,7 @@ module.exports = {
             return await interaction.editReply(`ניתן לבקש עזרה רק בצ'אנל מסוג פורום!`)
         }
 
-        const cooldown = getTimeLeft(user.id);
+        const cooldown = getTimeLeft(member.id);
         if (cooldown > 0) {
             const minutes = Math.floor(cooldown / 60000);
             const seconds = ((cooldown % 60000) / 1000).toFixed(0);
@@ -54,7 +55,7 @@ module.exports = {
 
         const collector = reply.createMessageComponentCollector({
             componentType: ComponentType.StringSelect,
-            filter: (i) => i.customId === customId && i.user.id === user.id,
+            filter: (i) => i.customId === customId && i.user.id === member.id,
         });
 
         collector.on('collect', async collectorInteraction => {
@@ -87,7 +88,7 @@ module.exports = {
 
                 await collectorInteraction.showModal(modal);
 
-                collectorInteraction.awaitModalSubmit({ time: 0, filter: (i) => i.customId === customModalId && i.user.id === user.id })
+                collectorInteraction.awaitModalSubmit({ time: 0, filter: (i) => i.customId === customModalId && i.user.id === member.id })
                     .then(async modalInteraction => {
                         await modalInteraction.deferUpdate();
                         await modalInteraction.editReply({ content: 'מעבד את הבקשה...', components: [] })
@@ -103,7 +104,7 @@ module.exports = {
                             threadName: `${title} - ${nickname}`,
                             content: `${question}`,
                             username: nickname,
-                            avatarURL: user.displayAvatarURL(),
+                            avatarURL: member.displayAvatarURL(),
                         })
                         if (!postMessage) {
                             logError('Failed to create support thread! The support webhook is not configured!');
@@ -121,7 +122,7 @@ module.exports = {
                         const firstMessage = post.lastMessage;
                         await post.lastMessage?.pin();
                         await post.lastMessage?.delete(); // deletes the 'pinned a message' message
-                        await (await post.send(`<@${user.id}> <@&${getHelperRoleId()}>`)).delete(); // ghost ping the user
+                        await (await post.send(`<@${member.id}> <@&${getHelperRoleId()}>`)).delete(); // ghost ping the user
                         await editWebhookMessage(firstMessage!.id, {
                             threadId: post.id,
                             content: `${question}\n\n\n_(נשאל על ידי ${collectorInteraction.user})_\n||<@&${getHelperRoleId()}>||`
@@ -132,12 +133,12 @@ module.exports = {
                             type: Object.keys(forumSupportLabels).find(key => forumSupportLabels[key as SupportType] === tag.name) as SupportType,
                             approved: false,
                             denied: false,
-                            authorId: user.id,
+                            authorId: member.id,
                             question,
                             title,
                         });
 
-                        addCooldown(user.id);
+                        addCooldown(member.id);
                         await modalInteraction.editReply({ content: `השאלה נשלחה!\nניתן לצפות בפוסט שנפתח:\n\n <#${post.id}>`, components: [] });
 
                     }).catch(async (err) => {
