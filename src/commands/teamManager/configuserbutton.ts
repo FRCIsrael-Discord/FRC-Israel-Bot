@@ -25,14 +25,13 @@ module.exports = {
         const { options, guild } = interaction;
 
         const buttons = new ActionRowBuilder<ButtonBuilder>().setComponents(
-            new ButtonBuilder().setCustomId('configFRCUserButton').setLabel('FRC').setStyle(ButtonStyle.Primary),
-            new ButtonBuilder().setCustomId('configFTCUserButton').setLabel('FTC').setStyle(ButtonStyle.Primary)
+            new ButtonBuilder().setCustomId('configFRCUserButton').setLabel('Setup User').setStyle(ButtonStyle.Primary),
         )
 
         const channel = guild?.channels.cache.get(options.getString('channel-id')!) as TextChannel;
         if (!channel) return await interaction.editReply({ content: 'Channel not found!' });
 
-        await channel.send({ content: 'Choose your FIRST program to set your team role and nickname:', components: [buttons] }).catch(async () => {
+        await channel.send({ content: 'Click the button to set your team role and nickname:', components: [buttons] }).catch(async () => {
             return await interaction.editReply({ content: 'I don\'t have permissions to send messages in that channel!' });
         });
         return await interaction.editReply({ content: 'Buttons added to the channel!' });

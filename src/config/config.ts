@@ -21,7 +21,6 @@ interface ConfigObject {
 interface Roles {
     teams: string[];
     noTeam: string;
-    ftc: string;
     helper: string;
 };
 
@@ -61,10 +60,6 @@ export function getNoTeamRoleId(): string {
     return config.roles.noTeam;
 }
 
-export function getFTCTeamRoleId(): string {
-    return config.roles.ftc;
-}
-
 export function setTeamRoles(roleIds: string[]) {
     config.roles.teams = roleIds;
     updateConfigFile();
@@ -76,11 +71,6 @@ export function isTeamRoleExists(roleId: string): boolean {
 
 export function setNoTeamRoleId(roleId: string) {
     config.roles.noTeam = roleId;
-    updateConfigFile();
-}
-
-export function setFTCTeamRoleId(roleId: string) {
-    config.roles.ftc = roleId;
     updateConfigFile();
 }
 
