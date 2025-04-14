@@ -10,7 +10,7 @@ module.exports = {
     execute: async (bot: Bot, interaction: ButtonInteraction) => {
         const modal = new ModalBuilder()
             .setCustomId('configFRCUserModal')
-            .setTitle('הגדרות משתמש (FRC)')
+            .setTitle('הגדרות משתמש')
 
         const nicknameInput = new TextInputBuilder()
             .setCustomId('nicknameInput')
